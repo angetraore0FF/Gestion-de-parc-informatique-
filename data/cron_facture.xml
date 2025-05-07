@@ -1,0 +1,11 @@
+<odoo>
+    <record id="ir_cron_facturation_recurrente" model="ir.cron">
+        <field name="name">Facturation Récurrente Contrats</field>
+        <field name="model_id" ref="gestion_parc_informatique.model_gestion_contrat"/>
+        <field name="state">code</field>
+        <field name="code">model._generer_factures_recurrentes()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

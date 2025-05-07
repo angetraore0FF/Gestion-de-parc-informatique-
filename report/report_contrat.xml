@@ -1,0 +1,35 @@
+<odoo>
+    <template id="report_contrat">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Contrat de Service N° <span t-field="object.name"/></h2>
+                    <div>
+                        <p>Client: <span t-field="object.client_id"/></p>
+                        <p>Période: Du <span t-field="object.date_debut"/> au <span t-field="object.date_fin"/></p>
+                        <p>Montant: <span t-field="object.montant"/> €</p>
+                        <p>Récurrence: <span t-field="object.recurrence"/></p>
+                    </div>
+                    <div>
+                        <h3>Équipements couverts:</h3>
+                        <ul>
+                            <t t-foreach="object.equipement_ids" t-as="equipement">
+                                <li><span t-field="equipement.name"/> (<span t-field="equipement.type_equipement"/>)</li>
+                            </t>
+                        </ul>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <report
+        id="action_report_contrat"
+        string="Contrat PDF"
+        model="gestion.contrat"
+        report_type="qweb-pdf"
+        name="gestion_parc_informatique.report_contrat"
+        file="gestion_parc_informatique.report_contrat"
+        attachment_use="False"
+    />
+</odoo>

@@ -1,0 +1,123 @@
+<odoo>
+
+    <record id="view_contrat_tree" model="ir.ui.view">
+        <field name="name">gestion.contrat.list</field>
+        <field name="model">gestion.contrat</field>
+        <field name="arch" type="xml">
+            <list string="Liste des contrats">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="date_debut"/>
+                <field name="date_fin"/>
+                <field name="statut"/>
+                <field name="montant"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action principale mise à jour -->
+    <record id="action_contrat_service" model="ir.actions.act_window">
+        <field name="name">Contrats</field>
+        <field name="res_model">gestion.contrat</field>
+        <field name="view_mode">kanban,tree,form</field>  <!-- Notez 'tree' au lieu de 'list' -->
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Créez votre premier contrat</p>
+        </field>
+    </record>
+
+    <!-- Menu principal -->
+    <menuitem id="menu_contrat_main" 
+              name="Contrats" 
+              parent="menu_parc_root" 
+              action="action_contrat_service"
+              sequence="10"/>
+
+
+    <!-- Séquence pour la référence auto -->
+    <data noupdate="1">
+        <record id="seq_contrat" model="ir.sequence">
+            <field name="name">Contrat Sequence</field>
+            <field name="code">gestion.contrat.sequence</field>
+            <field name="prefix">CTR</field>
+            <field name="padding">3</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+
+    <!-- Vue Kanban -->
+    <record id="view_contrat_kanban" model="ir.ui.view">
+        <field name="name">gestion.contrat.kanban</field>
+        <field name="model">gestion.contrat</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="statut">
+                <field name="statut"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </div>
+                                <div>
+                                    <field name="client_id" widget="many2one_avatar"/>
+                                </div>
+                                <div t-if="record.equipement_ids">
+                                    <small class="text-muted">
+                                        <i class="fa fa-desktop"/> 
+                                        <t t-esc="record.equipement_ids.length"/> équipement(s)
+                                    </small>
+                                </div>
+                                <div class="oe_kanban_footer">
+                                    <field name="date_debut"/> - <field name="date_fin"/>
+                                </div>
+                                <div class="oe_kanban_bottom">
+                                    <field name="statut" widget="statusbar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue formulaire avec bouton PDF -->
+    <record id="view_contrat_form" model="ir.ui.view">
+        <field name="name">gestion.contrat.form</field>
+        <field name="model">gestion.contrat</field>
+        <field name="arch" type="xml">
+            <form string="Contrat de service">
+                <header>
+                    <button name="action_generer_pdf" 
+                            type="object"
+                            string="Générer PDF"
+                            class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="client_id"/>
+                        <field name="equipement_ids" widget="many2many_tags"/>
+                        <field name="date_debut"/>
+                        <field name="date_fin"/>
+                        <field name="statut"/>
+                        <field name="montant"/>
+                        <field name="recurrence"/>
+                        <field name="prochaine_facture"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Mise à jour de l'action pour inclure Kanban -->
+    <record id="action_contrat_service" model="ir.actions.act_window">
+        <field name="name">Contrats</field>
+        <field name="res_model">gestion.contrat</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Créez votre premier contrat
+            </p>
+        </field>
+    </record>
+</odoo>

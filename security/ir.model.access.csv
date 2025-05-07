@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_equipement,access_equipement,model_gestion_equipement,base.group_user,1,1,1,1
+access_gestion_contrat,access_gestion_contrat,model_gestion_contrat,base.group_user,1,1,1,1
+access_gestion_intervention,access_gestion_intervention,model_gestion_intervention,base.group_user,1,1,1,1
+access_gestion_equipement,access_gestion_equipement,model_gestion_equipement,base.group_user,1,1,1,1
+access_gestion_facture,access_gestion_facture,model_gestion_facture,base.group_user,1,1,1,1
+access_gestion_contrat_portal,access_gestion_contrat_portal,model_gestion_contrat,base.group_portal,1,0,0,0
+access_gestion_equipement_portal,access_gestion_equipement_portal,model_gestion_equipement,base.group_portal,1,0,0,0
+access_gestion_intervention_portal,access_gestion_intervention_portal,model_gestion_intervention,base.group_portal,1,0,0,0
+access_gestion_facture_portal,access_gestion_facture_portal,model_gestion_facture,base.group_portal,1,0,0,0
+access_gestion_parc,access_gestion_parc,model_gestion_parc,base.group_user,1,1,1,1
+access_gestion_parc_user,gestion.parc.user,model_gestion_parc,base.group_portal,1,0,0,0
+access_gestion_equipement_user,gestion.equipement.user,model_gestion_equipement,base.group_portal,1,0,0,0
+access_gestion_intervention_user,gestion.intervention.user,model_gestion_intervention,base.group_portal,1,1,1,0

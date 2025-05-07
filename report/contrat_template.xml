@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_contrat">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="container">
+                    <!-- En-tête du contrat -->
+                    <div class="text-center mb-4">
+                        <h2 style="color: #2c3e50;">CONTRAT DE SERVICE MAINTENANCE</h2>
+                        <h4 style="border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block;">
+                            Référence: <span t-field="object.name"/>
+                        </h4>
+                    </div>
+
+                    <!-- Informations principales -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <strong>INFORMATIONS CLIENT</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Nom :</strong> <span t-field="object.client_id"/></p>
+                                    <p><strong>Adresse :</strong> <span t-field="object.client_id.street"/></p>
+                                    <p><strong>Ville :</strong> <span t-field="object.client_id.city"/> <span t-field="object.client_id.zip"/></p>
+                                    <p><strong>Tél :</strong> <span t-field="object.client_id.phone"/></p>
+                                    <p><strong>Email :</strong> <span t-field="object.client_id.email"/></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <strong>DÉTAILS DU CONTRAT</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Période :</strong> Du <span t-field="object.date_debut"/> au <span t-field="object.date_fin"/></p>
+                                    <p><strong>Statut :</strong> <span t-field="object.statut"/></p>
+                                    <p><strong>Montant :</strong> <span t-field="object.montant"/> €</p>
+                                    <p><strong>Fréquence :</strong> <span t-field="object.recurrence"/></p>
+                                    <p><strong>Prochaine facture :</strong> <span t-field="object.prochaine_facture"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Liste des équipements -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <strong>ÉQUIPEMENTS COUVERTS</strong>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Type</th>
+                                        <th>Date Acquisition</th>
+                                        <th>Garantie</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="object.equipement_ids" t-as="equipement">
+                                        <tr>
+                                            <td><span t-field="equipement.name"/></td>
+                                            <td><span t-field="equipement.type_equipement"/></td>
+                                            <td><span t-field="equipement.date_acquisition"/></td>
+                                            <td><span t-field="equipement.garantie_fin"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Conditions générales -->
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <strong>CONDITIONS GÉNÉRALES</strong>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>Le présent contrat prend effet à la date de signature.</li>
+                                <li>Toute intervention non couverte par ce contrat fera l'objet d'un devis séparé.</li>
+                                <li>Le client s'engage à fournir un accès complet aux équipements couverts.</li>
+                                <li>Les interventions seront effectuées dans un délai maximum de 48h ouvrées.</li>
+                                <li>Toute résiliation doit être notifiée par écrit 30 jours à l'avance.</li>
+                            </ol>
+                            <div style="margin-top: 50px;">
+                                <div style="float: left; width: 45%; text-align: center;">
+                                    <p>Pour le client</p>
+                                    <p style="margin-top: 50px;">_________________________</p>
+                                </div>
+                                <div style="float: right; width: 45%; text-align: center;">
+                                    <p>Pour <span t-field="object.company_id.name"/></p>
+                                    <p style="margin-top: 50px;">_________________________</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pied de page -->
+                    <div class="text-center mt-4" style="font-size: 0.8em; color: #7f8c8d;">
+                        <p>Document généré le <span t-field="object.create_date"/> - <span t-field="object.company_id.name"/></p>
+                    </div>
+                </div>
+
+                <style>
+                    .card {
+                        margin-bottom: 20px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                    }
+                    .card-header {
+                        padding: 10px 15px;
+                        font-size: 1.1em;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    th {
+                        background-color: #f8f9fa;
+                        text-align: left;
+                    }
+                </style>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Template pour la liste des parcs -->
+    <template id="portal_my_parcs" inherit_id="portal.portal_my_home">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Mes Parcs Informatiques</t>
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>Mes Parcs Informatiques</h2>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Liste des parcs</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Description</th>
+                                            <th>Nombre d'équipements</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="parcs" t-as="parc">
+                                            <tr>
+                                                <td><t t-esc="parc.name"/></td>
+                                                <td><t t-esc="parc.description or ''"/></td>
+                                                <td><t t-esc="parc.equipement_count"/></td>
+                                                <td>
+                                                    <a t-attf-href="/my/parc/#{parc.id}/equipements" 
+                                                       class="btn btn-primary btn-sm">
+                                                        Voir équipements
+                                                    </a>
+                                                    <a t-attf-href="/my/intervention/new?parc_id=#{parc.id}" 
+                                                       class="btn btn-secondary btn-sm ml-2">
+                                                        Créer un ticket
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="not parcs">
+                                            <tr>
+                                                <td colspan="4" class="text-center">Aucun parc disponible</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Template pour la liste des équipements d'un parc -->
+    <template id="portal_my_parc_equipements" inherit_id="portal.portal_my_home">
+        <t t-call="portal.portal_layout">
+            <t t-set="title" t-esc="'Équipements du parc ' + (parc.name if parc else 'Non spécifié')"/>
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 t-esc="'Équipements du parc ' + (parc.name if parc else 'Non spécifié')"/>
+                        <a href="/my/parcs" class="btn btn-secondary mb-3">Retour aux parcs</a>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <t t-if="parc">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nom</th>
+                                                <th>Type</th>
+                                                <th>État</th>
+                                                <th>Fin de garantie</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="equipements" t-as="equipement">
+                                                <tr>
+                                                    <td><t t-esc="equipement.name"/></td>
+                                                    <td><t t-esc="equipement.type_equipement"/></td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-{{ 'success' if equipement.etat == 'en_service' else 'danger' if equipement.etat == 'en_panne' else 'warning' }}">
+                                                            <t t-esc="equipement.etat"/>
+                                                        </span>
+                                                    </td>
+                                                    <td><t t-esc="equipement.garantie_fin or 'N/A'"/></td>
+                                                    <td>
+                                                        <a t-attf-href="/my/intervention/new?equipement_id=#{equipement.id}" 
+                                                           class="btn btn-secondary btn-sm">
+                                                            Créer un ticket
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="not equipements">
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Aucun équipement dans ce parc</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                                <t t-if="not parc">
+                                    <div class="alert alert-danger">
+                                        Parc non trouvé ou non spécifié
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Template pour le formulaire de création d'intervention -->
+    <template id="portal_my_intervention_form" inherit_id="portal.portal_my_home">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Nouvelle intervention</t>
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>Nouvelle demande d'intervention</h2>
+                        <a href="/my/parcs" class="btn btn-secondary mb-3">Retour aux parcs</a>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <form t-att-action="'/my/intervention/create'" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="parc_id" t-att-value="parc_id"/>
+                                    
+                                    <div class="form-group">
+                                        <label for="title">Titre *</label>
+                                        <input type="text" class="form-control" id="title" name="title" required="required"/>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="description">Description *</label>
+                                        <textarea class="form-control" id="description" name="description" rows="5" required="required"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="equipement_id">Équipement concerné *</label>
+                                        <select class="form-control" id="equipement_id" name="equipement_id" required="required">
+                                            <option value="">Sélectionnez un équipement</option>
+                                            <t t-foreach="equipements" t-as="equipement">
+                                                <option t-att-value="equipement.id" 
+                                                        t-att-selected="'selected' if equipement.id == default_equipement_id else None">
+                                                    <t t-esc="equipement.name"/> (<t t-esc="equipement.type_equipement"/>)
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

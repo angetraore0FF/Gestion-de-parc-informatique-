@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Action principale pour afficher les équipements -->
+    <record id="action_parc_equipement" model="ir.actions.act_window">
+        <field name="name">Équipements</field>
+        <field name="res_model">gestion.equipement</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('parc_id','=',False)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez un équipement pour commencer à gérer votre parc informatique.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu principal (racine), visible sur le tableau de bord -->
+    <menuitem id="menu_parc_root"
+              name="Parc Informatique"
+              sequence="10"
+              web_icon="gestion_parc_informatique,static/description/icon.png"/>
+
+    <!-- Menu enfant Équipements -->
+    <menuitem id="menu_parc_equipement"
+              name="Équipements"
+              parent="menu_parc_root"
+              action="action_parc_equipement"
+              sequence="20"/>
+
+    <!-- Vue Kanban Équipement améliorée -->
+    <record id="view_equipement_kanban" model="ir.ui.view">
+        <field name="name">gestion.equipement.kanban</field>
+        <field name="model">gestion.equipement</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="type_equipement">
+                <field name="id"/>
+                <field name="image"/>
+                <field name="name"/>
+                <field name="type_equipement"/>
+                <field name="etat"/>
+                <field name="garantie_fin"/>
+                <field name="parc_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_image">
+                                    <img t-if="record.image.raw_value"
+     t-att-src="'/web/image/gestion.equipement/' + record.id.value + '/image/'" 
+     class="oe_kanban_avatar" alt="Image"/>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <strong><field name="name"/></strong>
+                                    <div t-if="record.type_equipement.value">
+                                        <span class="fa fa-tag" title="Type"/> <span t-esc="record.type_equipement.value"/>
+                                    </div>
+                                    <div t-if="record.etat.value" t-attf-class="oe_kanban_text_{{ record.etat.value }}">
+                                        <span class="fa fa-circle" title="État"/> <field name="etat" widget="badge"/>
+                                    </div>
+                                    <div t-if="record.garantie_fin.value">
+                                        <span class="fa fa-calendar" title="Fin de garantie"/> <field name="garantie_fin" widget="date"/>
+                                    </div>
+                                    <div t-if="record.parc_id.value">
+                                        <span class="fa fa-server" title="Parc"/> <field name="parc_id" widget="many2one_kanban"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+                <colors>
+                    <field name="etat"/>
+                    <color value="en_service" color="success"/>
+                    <color value="en_panne" color="danger"/>
+                    <color value="hors_service" color="muted"/>
+                </colors>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue formulaire Équipement améliorée -->
+    <record id="view_equipement_form" model="ir.ui.view">
+        <field name="name">gestion.equipement.form</field>
+        <field name="model">gestion.equipement</field>
+        <field name="arch" type="xml">
+            <form string="Équipement">
+                <header>
+                    <button name="action_show_smart_button" 
+                            type="object" 
+                            string="Voir détails" 
+                            class="oe_highlight"
+                            invisible="not id"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_show_history" 
+                                type="object" 
+                                string="Historique" 
+                                class="oe_stat_button" 
+                                icon="fa-history"
+                                invisible="not id"/>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image_medium'}"/>
+                        </group>
+                        <group>
+                            <field name="reference"/>
+                            <field name="type_equipement"/>
+                            <field name="client_id" options="{'no_create': True}"/>
+                            <field name="parc_id" options="{'no_create': True}" readonly="1" invisible="not parc_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Détails">
+                            <group>
+                                <field name="date_acquisition"/>
+                                <field name="garantie_fin"/>
+                                <field name="etat" widget="radio"/>
+                            </group>
+                        </page>
+                        <page string="Historique" invisible="not id">
+                            <field name="message_ids" widget="mail_thread"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste Équipement améliorée -->
+    <record id="view_equipement_list" model="ir.ui.view">
+        <field name="name">gestion.equipement.list</field>
+        <field name="model">gestion.equipement</field>
+        <field name="arch" type="xml">
+            <list string="Équipements" decoration-muted="etat == 'hors_service'" decoration-danger="etat == 'en_panne'">
+                <field name="image" widget="image" options="{'widget_size': 'small'}"/>
+                <field name="name" string="Nom"/>
+                <field name="type_equipement" string="Type"/>
+                <field name="client_id" string="Client"/>
+                <field name="etat" string="État" widget="badge"/>
+                <field name="garantie_fin" string="Fin garantie" widget="date"/>
+                <field name="parc_id" string="Parc" groups="gestion_parc_informatique.group_parc_manager"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue recherche améliorée -->
+    <record id="view_equipement_search" model="ir.ui.view">
+        <field name="name">gestion.equipement.search</field>
+        <field name="model">gestion.equipement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Nom"/>
+                <field name="type_equipement"/>
+                <field name="client_id"/>
+                <field name="etat"/>
+                <field name="parc_id" groups="gestion_parc_informatique.group_parc_manager"/>
+                <filter string="En service" name="en_service" domain="[('etat','=','en_service')]"/>
+                <filter string="En panne" name="en_panne" domain="[('etat','=','en_panne')]"/>
+                <filter string="Garantie expirée" name="garantie_expiree" domain="[('garantie_fin','&lt;',context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Disponibles" name="disponibles" domain="[('parc_id','=',False)]" help="Équipements non attribués à un parc"/>
+                <filter string="Attribués" name="attribues" domain="[('parc_id','!=',False)]" help="Équipements déjà attribués à un parc"/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_by_type" context="{'group_by':'type_equipement'}"/>
+                    <filter string="Client" name="group_by_client" context="{'group_by':'client_id'}"/>
+                    <filter string="Parc" name="group_by_parc" context="{'group_by':'parc_id'}" groups="gestion_parc_informatique.group_parc_manager"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

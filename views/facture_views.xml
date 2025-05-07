@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Vue Kanban des factures -->
+    <record id="view_facture_kanban" model="ir.ui.view">
+        <field name="name">gestion.facture.kanban</field>
+        <field name="model">gestion.facture</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="statut">
+                <field name="contrat_id"/>
+                <field name="client_id"/>
+                <field name="date_facture"/>
+                <field name="montant"/>
+                <field name="statut"/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_card_header">
+                                    <strong><field name="contrat_id"/></strong>
+                                </div>
+                                <div>
+                                    <field name="client_id" widget="many2one_avatar"/>
+                                </div>
+                                <div>
+                                    <span>Date: </span><field name="date_facture"/>
+                                </div>
+                                <div>
+                                    <span>Montant: </span><field name="montant"/>
+                                </div>
+                                <div>
+                                    <field name="statut" widget="badge"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_card_header">
+                                    <strong><field name="contrat_id"/></strong>
+                                </div>
+                                <div>
+                                    <field name="client_id" widget="many2one_avatar"/>
+                                </div>
+                                <div>
+                                    <span>Date: </span><field name="date_facture"/>
+                                </div>
+                                <div>
+                                    <span>Montant: </span><field name="montant"/>
+                                </div>
+                                <div>
+                                    <field name="statut" widget="badge"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+                <colors>
+                    <field name="statut"/>
+                    <color value="brouillon" color="warning"/>
+                    <color value="envoyee" color="primary"/>
+                    <color value="payee" color="success"/>
+                </colors>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue liste des factures -->
+    <record id="view_facture_tree" model="ir.ui.view">
+        <field name="name">gestion.facture.list</field>
+        <field name="model">gestion.facture</field>
+        <field name="arch" type="xml">
+            <list string="Factures">
+                <field name="contrat_id"/>
+                <field name="client_id"/>
+                <field name="date_facture"/>
+                <field name="montant"/>
+                <field name="statut"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire d'une facture -->
+    <record id="view_facture_form" model="ir.ui.view">
+        <field name="name">gestion.facture.form</field>
+        <field name="model">gestion.facture</field>
+        <field name="arch" type="xml">
+            <form string="Facture">
+                <sheet>
+                    <group>
+                        <field name="contrat_id"/>
+                        <field name="client_id" readonly="1"/>
+                        <field name="date_facture"/>
+                        <field name="montant"/>
+                        <field name="statut"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir la liste des factures -->
+    <record id="action_gestion_facture" model="ir.actions.act_window">
+        <field name="name">Factures</field>
+        <field name="res_model">gestion.facture</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_group_by_statut': 1}</field>
+    </record>
+
+    <!-- Menu pour accéder aux factures -->
+    <menuitem id="menu_gestion_facture"
+              name="Factures"
+              parent="menu_parc_root"
+              action="action_gestion_facture"
+              sequence="50"/>
+</odoo>

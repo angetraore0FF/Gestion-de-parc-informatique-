@@ -1,0 +1,131 @@
+<odoo>
+    <!-- Vue Kanban corrigée avec création explicite -->
+    <record id="view_parc_kanban" model="ir.ui.view">
+    <field name="name">gestion.parc.kanban</field>
+    <field name="model">gestion.parc</field>
+    <field name="arch" type="xml">
+        <kanban default_group_by="client_id">
+            <header>
+                <button name="%(action_parc)d" 
+                        string="Créer" 
+                        type="action"
+                        class="btn-primary"
+                        icon="fa-plus"/>
+            </header>
+            
+            <field name="id"/>
+            <field name="name"/>
+            <field name="client_id"/>
+            <field name="equipement_ids"/>
+            <field name="equipement_count"/>
+            <field name="description"/>
+            
+            <templates>
+                <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click">
+                        <div class="oe_kanban_details">
+                            <strong><field name="name"/></strong>
+                            
+                            <div t-if="record.client_id.value">
+                                <field name="client_id" widget="many2one_avatar"/>
+                            </div>
+                            
+                            <div>
+                                <small class="text-muted">
+                                    <i class="fa fa-desktop"/> 
+                                    <t t-esc="record.equipement_count.value or 0"/> équipement(s)
+                                </small>
+                            </div>
+                            
+                            <div t-if="record.description.value" class="oe_kanban_bottom_left">
+                                <field name="description" widget="text"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+    <!-- Action avec création forcée -->
+    <record id="action_parc" model="ir.actions.act_window">
+        <field name="name">Parcs</field>
+        <field name="res_model">gestion.parc</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_parc_kanban"/>
+        <field name="context">{'create': True}</field>
+        <field name="help" type="html">
+            <div class="o_view_nocontent">
+                <div class="o_view_nocontent_content">
+                    <p>
+                        <i class="fa fa-plus-circle fa-3x"/>
+                    </p>
+                    <p>
+                        Cliquez sur <b>Créer</b> pour ajouter un nouveau parc
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- Vue Arbre (Liste) -->
+    <record id="view_parc_tree" model="ir.ui.view">
+        <field name="name">gestion.parc.list</field>
+        <field name="model">gestion.parc</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="equipement_count" string="Nb équipements"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire -->
+    <record id="view_parc_form" model="ir.ui.view">
+        <field name="name">gestion.parc.form</field>
+        <field name="model">gestion.parc</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_ajouter_equipement" 
+                            type="object"
+                            string="Ajouter Équipement"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" string="Nom du parc"/>
+                        <field name="description"/>
+                        <field name="client_id" string="Client concerné"/>
+                        <field name="equipement_count" string="Nombre d'équipements" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Équipements">
+                            <field name="equipement_ids" context="{'default_parc_id': id}">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="type_equipement"/>
+                                    <field name="etat" widget="statusbar"/>
+                                    <field name="garantie_fin"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="type_equipement"/>
+                                        <field name="client_id"/>
+                                        <field name="date_acquisition"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_parc" name="Parcs" parent="menu_parc_root" sequence="15" action="action_parc"/>
+</odoo>
