@@ -88,3 +88,7 @@ gestion_parc_informatique/
     ├── intervention_views.xml    # Vues Intervention
     ├── parc_views.xml            # Vues Parc
     └── portal_templates.xml      # Templates du portail client
+
+
+Auteur
+Traoré Ange
