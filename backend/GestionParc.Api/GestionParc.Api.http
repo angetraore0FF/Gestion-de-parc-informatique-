@@ -1,0 +1,6 @@
+@GestionParc.Api_HostAddress = http://localhost:5118
+
+GET {{GestionParc.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

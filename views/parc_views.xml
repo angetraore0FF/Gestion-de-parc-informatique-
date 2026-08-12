@@ -5,14 +5,6 @@
     <field name="model">gestion.parc</field>
     <field name="arch" type="xml">
         <kanban default_group_by="client_id">
-            <header>
-                <button name="%(action_parc)d" 
-                        string="Créer" 
-                        type="action"
-                        class="btn-primary"
-                        icon="fa-plus"/>
-            </header>
-            
             <field name="id"/>
             <field name="name"/>
             <field name="client_id"/>
@@ -21,7 +13,7 @@
             <field name="description"/>
             
             <templates>
-                <t t-name="kanban-box">
+                <t t-name="card">
                     <div class="oe_kanban_global_click">
                         <div class="oe_kanban_details">
                             <strong><field name="name"/></strong>

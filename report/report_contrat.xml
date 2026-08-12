@@ -1,35 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="report_contrat">
-        <t t-call="web.html_container">
-            <t t-call="web.external_layout">
-                <div class="page">
-                    <h2>Contrat de Service N° <span t-field="object.name"/></h2>
-                    <div>
-                        <p>Client: <span t-field="object.client_id"/></p>
-                        <p>Période: Du <span t-field="object.date_debut"/> au <span t-field="object.date_fin"/></p>
-                        <p>Montant: <span t-field="object.montant"/> €</p>
-                        <p>Récurrence: <span t-field="object.recurrence"/></p>
+    <template id="report_contrat_document">
+        <t t-call="web.external_layout">
+            <t t-set="company" t-value="doc.env.company"/>
+            <div class="page">
+                <div class="text-center mb-4">
+                    <h2 style="color: #2c3e50;">CONTRAT DE SERVICE MAINTENANCE</h2>
+                    <h4 style="border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block;">
+                        Référence: <span t-field="doc.name"/>
+                    </h4>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong>INFORMATIONS CLIENT</strong>
+                        <p><strong>Nom :</strong> <span t-field="doc.client_id"/></p>
+                        <p><strong>Adresse :</strong> <span t-field="doc.client_id.street"/></p>
+                        <p><strong>Ville :</strong> <span t-field="doc.client_id.city"/> <span t-field="doc.client_id.zip"/></p>
+                        <p><strong>Tél :</strong> <span t-field="doc.client_id.phone"/></p>
+                        <p><strong>Email :</strong> <span t-field="doc.client_id.email"/></p>
                     </div>
-                    <div>
-                        <h3>Équipements couverts:</h3>
-                        <ul>
-                            <t t-foreach="object.equipement_ids" t-as="equipement">
-                                <li><span t-field="equipement.name"/> (<span t-field="equipement.type_equipement"/>)</li>
-                            </t>
-                        </ul>
+                    <div class="col-6">
+                        <strong>DÉTAILS DU CONTRAT</strong>
+                        <p><strong>Période :</strong> Du <span t-field="doc.date_debut"/> au <span t-field="doc.date_fin"/></p>
+                        <p><strong>Statut :</strong> <span t-field="doc.statut"/></p>
+                        <p><strong>Montant :</strong> <span t-field="doc.montant"/> €</p>
+                        <p><strong>Fréquence :</strong> <span t-field="doc.recurrence"/></p>
+                        <p><strong>Prochaine facture :</strong> <span t-field="doc.prochaine_facture"/></p>
                     </div>
                 </div>
+
+                <div class="mb-4">
+                    <strong>ÉQUIPEMENTS COUVERTS</strong>
+                    <table class="table table-bordered mt-2">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Type</th>
+                                <th>Date Acquisition</th>
+                                <th>Garantie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc.equipement_ids" t-as="equipement">
+                                <tr>
+                                    <td><span t-field="equipement.name"/></td>
+                                    <td><span t-field="equipement.type_equipement"/></td>
+                                    <td><span t-field="equipement.date_acquisition"/></td>
+                                    <td><span t-field="equipement.garantie_fin"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <strong>CONDITIONS GÉNÉRALES</strong>
+                    <ol>
+                        <li>Le présent contrat prend effet à la date de signature.</li>
+                        <li>Toute intervention non couverte par ce contrat fera l'objet d'un devis séparé.</li>
+                        <li>Le client s'engage à fournir un accès complet aux équipements couverts.</li>
+                        <li>Les interventions seront effectuées dans un délai maximum de 48h ouvrées.</li>
+                        <li>Toute résiliation doit être notifiée par écrit 30 jours à l'avance.</li>
+                    </ol>
+                    <div style="margin-top: 50px;">
+                        <div style="float: left; width: 45%; text-align: center;">
+                            <p>Pour le client</p>
+                            <p style="margin-top: 50px;">_________________________</p>
+                        </div>
+                        <div style="float: right; width: 45%; text-align: center;">
+                            <p>Pour <span t-field="company.name"/></p>
+                            <p style="margin-top: 50px;">_________________________</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4" style="font-size: 0.8em; color: #7f8c8d;">
+                    <p>Document généré le <span t-field="doc.create_date"/> - <span t-field="company.name"/></p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_contrat">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="gestion_parc_informatique.report_contrat_document"/>
             </t>
         </t>
     </template>
 
-    <report
-        id="action_report_contrat"
-        string="Contrat PDF"
-        model="gestion.contrat"
-        report_type="qweb-pdf"
-        name="gestion_parc_informatique.report_contrat"
-        file="gestion_parc_informatique.report_contrat"
-        attachment_use="False"
-    />
+    <record id="action_report_contrat" model="ir.actions.report">
+        <field name="name">Contrat PDF</field>
+        <field name="model">gestion.contrat</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gestion_parc_informatique.report_contrat</field>
+        <field name="report_file">gestion_parc_informatique.report_contrat</field>
+        <field name="print_report_name">'Contrat - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_gestion_contrat"/>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

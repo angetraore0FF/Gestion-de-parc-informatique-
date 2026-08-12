@@ -166,11 +166,10 @@
                 <filter string="Garantie expirée" name="garantie_expiree" domain="[('garantie_fin','&lt;',context_today().strftime('%Y-%m-%d'))]"/>
                 <filter string="Disponibles" name="disponibles" domain="[('parc_id','=',False)]" help="Équipements non attribués à un parc"/>
                 <filter string="Attribués" name="attribues" domain="[('parc_id','!=',False)]" help="Équipements déjà attribués à un parc"/>
-                <group expand="0" string="Group By">
-                    <filter string="Type" name="group_by_type" context="{'group_by':'type_equipement'}"/>
-                    <filter string="Client" name="group_by_client" context="{'group_by':'client_id'}"/>
-                    <filter string="Parc" name="group_by_parc" context="{'group_by':'parc_id'}" groups="gestion_parc_informatique.group_parc_manager"/>
-                </group>
+                <separator/>
+                <filter string="Type" name="group_by_type" context="{'group_by':'type_equipement'}"/>
+                <filter string="Client" name="group_by_client" context="{'group_by':'client_id'}"/>
+                <filter string="Parc" name="group_by_parc" context="{'group_by':'parc_id'}" groups="gestion_parc_informatique.group_parc_manager"/>
             </search>
         </field>
     </record>

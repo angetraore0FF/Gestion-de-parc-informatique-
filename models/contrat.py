@@ -36,7 +36,22 @@ class ContratService(models.Model):
     prochaine_facture = fields.Date(string="Prochaine date de facturation", default=fields.Date.today)
 
     def action_generer_pdf(self):
-        return self.env.ref('gestion_parc_informatique.report_contrat').report_action(self)
+        report = self.env['ir.actions.report'].search([
+            ('report_name', '=', 'gestion_parc_informatique.report_contrat'),
+        ], limit=1)
+        return report.report_action(self)
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'statut' in vals:
+            for contrat in self:
+                body = f"Le statut de votre contrat {contrat.name} a été mis à jour à {vals['statut']}"
+                contrat.message_post(
+                    body=body,
+                    subject="Mise à jour de contrat",
+                    partner_ids=[contrat.client_id.id],
+                )
+        return res
 
     @api.model
     def _generer_factures_recurrentes(self):
@@ -61,15 +76,3 @@ class ContratService(models.Model):
                 delta = timedelta(days=30)
 
             contrat.write({'prochaine_facture': today + delta})
-
-def write(self, vals):
-    res = super(ContratService, self).write(vals)
-    if 'statut' in vals:
-        for contrat in self:
-            body = f"Le statut de votre contrat {contrat.name} a été mis à jour à {vals['statut']}"
-            contrat.message_post(
-                body=body,
-                subject="Mise à jour de contrat",
-                partner_ids=[contrat.client_id.id],
-            )
-    return res

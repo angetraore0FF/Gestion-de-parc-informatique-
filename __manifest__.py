@@ -10,15 +10,14 @@
     'data': [
     'security/gestion_parc_security.xml',
     'security/ir.model.access.csv',
-    'views/parc_views.xml',
     'views/equipement_views.xml',
+    'views/parc_views.xml',
     'views/contrat_views.xml',
     'views/intervention_views.xml',
     'views/facture_views.xml',
     'views/client_views.xml',
     'views/portal_templates.xml',  # Ligne séparée
     'report/report_contrat.xml',
-    'report/contrat_template.xml',
     ],
 
     "application": True,
