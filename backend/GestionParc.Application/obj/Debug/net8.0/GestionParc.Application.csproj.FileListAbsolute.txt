@@ -1,0 +1,16 @@
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\bin\Debug\net8.0\GestionParc.Application.deps.json
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\bin\Debug\net8.0\GestionParc.Application.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\bin\Debug\net8.0\GestionParc.Application.pdb
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\bin\Debug\net8.0\GestionParc.Domain.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\bin\Debug\net8.0\GestionParc.Domain.pdb
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.csproj.AssemblyReference.cache
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.AssemblyInfoInputs.cache
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.AssemblyInfo.cs
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.csproj.CoreCompileInputs.cache
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.sourcelink.json
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionP.31B363DC.Up2Date
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\refint\GestionParc.Application.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\GestionParc.Application.pdb
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Application\obj\Debug\net8.0\ref\GestionParc.Application.dll

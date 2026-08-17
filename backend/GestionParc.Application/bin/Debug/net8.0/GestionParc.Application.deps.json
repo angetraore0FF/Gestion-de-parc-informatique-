@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "GestionParc.Application/1.0.0": {
+        "dependencies": {
+          "GestionParc.Domain": "1.0.0"
+        },
+        "runtime": {
+          "GestionParc.Application.dll": {}
+        }
+      },
+      "GestionParc.Domain/1.0.0": {
+        "runtime": {
+          "GestionParc.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GestionParc.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GestionParc.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

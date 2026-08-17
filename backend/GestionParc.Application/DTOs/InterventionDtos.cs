@@ -30,6 +30,10 @@ public record InterventionDto(
     string? TechnicienName,
     StatutIntervention Statut,
     int? FactureInterventionId,
+    string? ContactReferent,
+    DateTime? DateDebutPanne,
+    string? DescriptionResolution,
+    string? IntervenantResolution,
     IReadOnlyList<InterventionMaterielDto> Materiels);
 
 public record CreateInterventionDto(
@@ -40,6 +44,10 @@ public record CreateInterventionDto(
     string? Description,
     int? TechnicienId,
     StatutIntervention Statut,
+    string? ContactReferent,
+    DateTime? DateDebutPanne,
+    string? DescriptionResolution,
+    string? IntervenantResolution,
     IReadOnlyList<CreateInterventionMaterielDto>? Materiels);
 
 public record UpdateInterventionDto(
@@ -49,7 +57,11 @@ public record UpdateInterventionDto(
     DateTime DateIntervention,
     string? Description,
     int? TechnicienId,
-    StatutIntervention Statut);
+    StatutIntervention Statut,
+    string? ContactReferent,
+    DateTime? DateDebutPanne,
+    string? DescriptionResolution,
+    string? IntervenantResolution);
 
 public record FactureInterventionDto(
     int Id,

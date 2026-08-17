@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  /* Palette Productivity Tool — Minimalism & Swiss Style */
+  --color-primary: #0d9488;
+  --color-primary-hover: #0f766e;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #ea580c;
+  --color-accent-foreground: #ffffff;
+  --color-surface: #f0fdfa;
+
+  /* Palette de statut (fixe, jamais thémée). Toujours accompagnée d'une
+     icône + d'un libellé : la couleur ne porte jamais le sens seule. */
+  --color-status-good: #0ca30c;
+  --color-status-warning: #fab219;
+  --color-status-serious: #ec835a;
+  --color-status-critical: #d03b3b;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+}
+
+h1,
+h2,
+h3,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

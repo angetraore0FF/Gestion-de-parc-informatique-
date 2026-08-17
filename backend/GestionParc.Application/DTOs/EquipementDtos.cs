@@ -12,10 +12,15 @@ public record EquipementDto(
     EtatEquipement Etat,
     TypeEquipement TypeEquipement,
     string? Reference,
+    string? AdresseMac,
+    string? AdresseIp,
+    string? SystemeExploitation,
+    string? Emplacement,
     int? ClientId,
     string? ClientName,
     int? ParcId,
-    string? ParcName);
+    string? ParcName,
+    int IncidentCount);
 
 public record CreateEquipementDto(
     string Name,
@@ -26,6 +31,10 @@ public record CreateEquipementDto(
     EtatEquipement Etat,
     TypeEquipement TypeEquipement,
     string? Reference,
+    string? AdresseMac,
+    string? AdresseIp,
+    string? SystemeExploitation,
+    string? Emplacement,
     int? ClientId,
     int? ParcId);
 
@@ -38,6 +47,10 @@ public record UpdateEquipementDto(
     EtatEquipement Etat,
     TypeEquipement TypeEquipement,
     string? Reference,
+    string? AdresseMac,
+    string? AdresseIp,
+    string? SystemeExploitation,
+    string? Emplacement,
     int? ClientId,
     int? ParcId);
 

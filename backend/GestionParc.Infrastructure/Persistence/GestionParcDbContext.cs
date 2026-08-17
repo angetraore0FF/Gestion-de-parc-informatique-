@@ -1,9 +1,12 @@
 using GestionParc.Domain.Entities;
+using GestionParc.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionParc.Infrastructure.Persistence;
 
-public class GestionParcDbContext : DbContext
+public class GestionParcDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
 {
     public GestionParcDbContext(DbContextOptions<GestionParcDbContext> options)
         : base(options)
@@ -25,6 +28,14 @@ public class GestionParcDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ApplicationUser>(e =>
+        {
+            e.HasOne<Client>().WithMany().HasForeignKey(u => u.ClientId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne<Technicien>().WithMany().HasForeignKey(u => u.TechnicienId).OnDelete(DeleteBehavior.SetNull);
+        });
+
         modelBuilder.Entity<Client>(e =>
         {
             e.HasIndex(c => c.Email);
@@ -54,6 +65,10 @@ public class GestionParcDbContext : DbContext
             e.HasIndex(eq => eq.SerialNumber);
             e.Property(eq => eq.Etat).HasConversion<string>().HasMaxLength(50);
             e.Property(eq => eq.TypeEquipement).HasConversion<string>().HasMaxLength(50);
+            e.Property(eq => eq.AdresseMac).HasMaxLength(50);
+            e.Property(eq => eq.AdresseIp).HasMaxLength(45);
+            e.Property(eq => eq.SystemeExploitation).HasMaxLength(100);
+            e.Property(eq => eq.Emplacement).HasMaxLength(200);
         });
 
         modelBuilder.Entity<ContratEquipement>(e =>
@@ -98,6 +113,8 @@ public class GestionParcDbContext : DbContext
         {
             e.Property(i => i.Name).HasMaxLength(200).IsRequired();
             e.Property(i => i.Statut).HasConversion<string>().HasMaxLength(50);
+            e.Property(i => i.ContactReferent).HasMaxLength(200);
+            e.Property(i => i.IntervenantResolution).HasMaxLength(200);
             e.HasOne(i => i.Client)
                 .WithMany(c => c.Interventions)
                 .HasForeignKey(i => i.ClientId)

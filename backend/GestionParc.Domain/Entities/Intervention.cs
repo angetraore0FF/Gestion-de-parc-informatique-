@@ -13,6 +13,10 @@ public class Intervention : BaseEntity
     public int? TechnicienId { get; set; }
     public StatutIntervention Statut { get; set; } = StatutIntervention.Nouveau;
     public int? FactureInterventionId { get; set; }
+    public string? ContactReferent { get; set; }
+    public DateTime? DateDebutPanne { get; set; }
+    public string? DescriptionResolution { get; set; }
+    public string? IntervenantResolution { get; set; }
 
     public Client Client { get; set; } = null!;
     public Equipement Equipement { get; set; } = null!;

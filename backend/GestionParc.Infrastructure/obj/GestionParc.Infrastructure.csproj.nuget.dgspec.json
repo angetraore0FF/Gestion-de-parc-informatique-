@@ -4,14 +4,83 @@
     "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj": {
+    "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Application\\GestionParc.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj",
-        "projectName": "GestionParc.Infrastructure",
-        "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Application\\GestionParc.Application.csproj",
+        "projectName": "GestionParc.Application",
+        "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Application\\GestionParc.Application.csproj",
         "packagesPath": "C:\\Users\\Ange\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Ange\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj": {
+                "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj",
+        "projectName": "GestionParc.Domain",
+        "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj",
+        "packagesPath": "C:\\Users\\Ange\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +118,106 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj",
+        "projectName": "GestionParc.Infrastructure",
+        "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\GestionParc.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Ange\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Ange\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Application\\GestionParc.Application.csproj": {
+                "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Application\\GestionParc.Application.csproj"
+              },
+              "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj": {
+                "projectPath": "C:\\Users\\Ange\\gestion_parc_informatique\\backend\\GestionParc.Domain\\GestionParc.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.Extensions.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2024.10.3, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.1.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

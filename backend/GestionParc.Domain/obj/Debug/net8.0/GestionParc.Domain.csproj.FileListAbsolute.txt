@@ -1,0 +1,12 @@
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\bin\Debug\net8.0\GestionParc.Domain.deps.json
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\bin\Debug\net8.0\GestionParc.Domain.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\bin\Debug\net8.0\GestionParc.Domain.pdb
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.AssemblyInfoInputs.cache
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.AssemblyInfo.cs
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.sourcelink.json
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\refint\GestionParc.Domain.dll
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\GestionParc.Domain.pdb
+C:\Users\Ange\gestion_parc_informatique\backend\GestionParc.Domain\obj\Debug\net8.0\ref\GestionParc.Domain.dll

@@ -1,7 +1,11 @@
+using GestionParc.Domain.Constants;
 using GestionParc.Domain.Entities;
 using GestionParc.Domain.Enums;
+using GestionParc.Infrastructure.Identity;
 using GestionParc.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GestionParc.Infrastructure.Data;
@@ -14,6 +18,8 @@ public static class DbInitializer
         var context = scope.ServiceProvider.GetRequiredService<GestionParcDbContext>();
 
         await context.Database.MigrateAsync();
+
+        await SeedRolesAndAdminAsync(scope.ServiceProvider);
 
         if (await context.Clients.AnyAsync())
             return;
@@ -88,5 +94,29 @@ public static class DbInitializer
             EquipementId = equipement.Id
         });
         await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
+    {
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+        foreach (var role in Roles.All)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        var adminEmail = configuration["Seed:AdminEmail"] ?? "admin@gestionparc.local";
+        var adminPassword = configuration["Seed:AdminPassword"] ?? "Admin#12345";
+
+        if (await userManager.FindByEmailAsync(adminEmail) is not null)
+            return;
+
+        var admin = new ApplicationUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+        var result = await userManager.CreateAsync(admin, adminPassword);
+        if (result.Succeeded)
+            await userManager.AddToRoleAsync(admin, Roles.Admin);
     }
 }

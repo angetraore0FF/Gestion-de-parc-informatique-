@@ -14,6 +14,10 @@ public class Equipement : BaseEntity
     public TypeEquipement TypeEquipement { get; set; }
     public string? Reference { get; set; }
     public byte[]? Image { get; set; }
+    public string? AdresseMac { get; set; }
+    public string? AdresseIp { get; set; }
+    public string? SystemeExploitation { get; set; }
+    public string? Emplacement { get; set; }
     public int? ClientId { get; set; }
     public int? ParcId { get; set; }
 
