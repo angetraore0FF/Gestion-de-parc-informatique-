@@ -31,10 +31,15 @@
 - Pages authentifiées non capturables ici (backend .NET non exécutable → 401/redirect login). Logique et types validés par le build.
 
 ## Backlog / Next
-- P1: Écran Tableau de bord (KPIs globaux: équipements, pannes ouvertes, factures impayées).
-- P1: Vue détail équipement (historique pannes) au clic.
-- P2: Thème sombre optionnel.
-- P2: Export/impression stylée des rapports.
+- P2: Graphiques temporels (interventions par mois) sur le tableau de bord.
+- P2: Filtres avancés & export CSV des listes.
+
+## Itération 2 (2026-06) — 4 fonctionnalités ajoutées
+- **Tableau de bord** (`DashboardPage`, route `/`) : 8 KPIs cliquables (équipements, pannes ouvertes, interventions ouvertes, garanties <30j, contrats actifs, factures impayées, clients, produits) + panneaux « Interventions récentes », « Alertes de garantie », « Statut des factures » (barres). Clients déplacé sur `/clients`.
+- **Mode sombre** : `ThemeProvider` (classe `.dark`, persistance localStorage), variante Tailwind v4 `@custom-variant dark`, bouton lune/soleil dans la topbar, variantes `dark:` sur tous les composants et surfaces de pages.
+- **Fiche équipement** : clic sur une ligne ouvre un `Drawer` latéral (infos, réseau/système, historique des pannes avec statuts) + actions Imprimer / Rapport PDF / Modifier.
+- **Rapports imprimables** : `PrintProvider` + document de marque A4 (`PrintReport`) et CSS `@media print`. Boutons « Imprimer » sur Contrats, Interventions et Fiche équipement (rendu élégant sans dépendre du PDF backend).
+- Vérif : `yarn build` (tsc + vite) **0 erreur** ; dev server HTTP 200. Pages authentifiées non capturables ici (backend .NET non exécutable).
 
 ## Notes
 - Aucun compte d'auth créé/modifié par la refonte (auth gérée côté backend .NET). Identifiant par défaut affiché sur le login: `admin@gestionparc.local` (seed backend).

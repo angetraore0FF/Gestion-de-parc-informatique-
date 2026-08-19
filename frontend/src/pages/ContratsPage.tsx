@@ -10,9 +10,10 @@ import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
-import { DownloadIcon, EditIcon, InvoiceIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { DownloadIcon, EditIcon, InvoiceIcon, PlusIcon, PrinterIcon, TrashIcon } from "../components/ui/Icons";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
+import { usePrint } from "../components/ui/PrintReport";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -30,6 +31,7 @@ const emptyForm: CreateContratDto = {
 export function ContratsPage() {
   const { hasRole } = useAuth();
   const { t, el, elEntries } = useI18n();
+  const { printReport } = usePrint();
   const canManage = hasRole("Admin", "GestionnaireParc");
   const qc = useQueryClient();
   const { data: contrats = [], isLoading } = useQuery({ queryKey: ["contrats"], queryFn: () => contratsApi.getAll() });
@@ -112,6 +114,33 @@ export function ContratsPage() {
       .then((blob) => window.open(URL.createObjectURL(blob), "_blank"));
   };
 
+  const printContrat = (c: ContratDto) => {
+    printReport({
+      title: t("report.contratTitle"),
+      reference: c.name,
+      meta: [
+        { label: t("contrats.col.client"), value: c.clientName },
+        { label: t("contrats.col.statut"), value: el("statutContrat", c.statut) },
+      ],
+      sections: [
+        {
+          heading: t("report.report"),
+          fields: [
+            { label: t("contrats.f.dateDebut"), value: c.dateDebut },
+            { label: t("contrats.f.dateFin"), value: c.dateFin },
+            { label: t("contrats.col.montant"), value: `${c.montant.toFixed(2)} €` },
+            { label: t("contrats.f.recurrence"), value: el("recurrence", c.recurrence) },
+            { label: t("contrats.f.prochaine"), value: c.prochaineFacture },
+          ],
+        },
+        {
+          heading: t("contrats.f.equipements"),
+          items: (c.equipementIds ?? []).map((id) => equipements.find((e) => e.id === id)?.name ?? `#${id}`),
+        },
+      ],
+    });
+  };
+
   const columns: Column<ContratDto>[] = [
     { header: t("contrats.col.ref"), render: (c) => c.name },
     { header: t("contrats.col.client"), render: (c) => c.clientName },
@@ -144,6 +173,9 @@ export function ContratsPage() {
         onRowClick={canManage ? openEdit : undefined}
         actions={(c) => (
           <div className="flex justify-end gap-1.5">
+            <Button variant="ghost" onClick={() => printContrat(c)} aria-label={`${t("report.print")} — ${c.name}`}>
+              <PrinterIcon /> {t("report.print")}
+            </Button>
             <Button variant="ghost" onClick={() => downloadPdf(c)} aria-label={`${t("action.pdf")} — ${c.name}`}>
               <DownloadIcon /> {t("action.pdf")}
             </Button>
@@ -217,11 +249,11 @@ export function ContratsPage() {
                 <Input type="date" value={form.prochaineFacture ?? ""} onChange={(e) => setForm({ ...form, prochaineFacture: e.target.value })} />
               </FormField>
             </div>
-            <fieldset className="rounded-lg border border-slate-200 p-3">
-              <legend className="px-1 text-[13px] font-semibold text-slate-700">{t("contrats.f.equipements")}</legend>
+            <fieldset className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+              <legend className="px-1 text-[13px] font-semibold text-slate-700 dark:text-slate-300">{t("contrats.f.equipements")}</legend>
               <div className="max-h-36 space-y-1 overflow-y-auto">
                 {equipements.map((eq) => (
-                  <label key={eq.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-sm text-slate-700 hover:bg-slate-50">
+                  <label key={eq.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800">
                     <input
                       type="checkbox"
                       checked={form.equipementIds?.includes(eq.id) ?? false}

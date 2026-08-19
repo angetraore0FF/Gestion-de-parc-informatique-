@@ -10,9 +10,10 @@ import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
-import { AlertIcon, CheckIcon, InvoiceIcon, PlusIcon, TrashIcon, WrenchIcon } from "../components/ui/Icons";
+import { AlertIcon, CheckIcon, InvoiceIcon, PlusIcon, PrinterIcon, TrashIcon, WrenchIcon } from "../components/ui/Icons";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
+import { usePrint } from "../components/ui/PrintReport";
 
 const emptyForm: CreateInterventionDto = {
   name: "",
@@ -32,6 +33,7 @@ const emptyForm: CreateInterventionDto = {
 export function InterventionsPage() {
   const { hasRole } = useAuth();
   const { t, el, elEntries } = useI18n();
+  const { printReport } = usePrint();
   const canManage = hasRole("Admin", "GestionnaireParc", "GestionnaireIntervention", "Technicien");
   const canManagers = hasRole("Admin", "GestionnaireParc");
   const qc = useQueryClient();
@@ -176,8 +178,46 @@ export function InterventionsPage() {
   ];
 
   const sectionTitle = (label: string) => (
-    <h3 className="font-heading text-xs font-bold uppercase tracking-wider text-brand">{label}</h3>
+    <h3 className="font-heading text-xs font-bold uppercase tracking-wider text-brand dark:text-lime">{label}</h3>
   );
+
+  const printIntervention = (i: InterventionDto) => {
+    printReport({
+      title: t("report.panneTitle"),
+      reference: i.name,
+      meta: [
+        { label: t("interventions.col.client"), value: i.clientName },
+        { label: t("interventions.col.equipement"), value: i.equipementName },
+        { label: t("interventions.col.date"), value: new Date(i.dateIntervention).toLocaleDateString() },
+        { label: t("interventions.col.statut"), value: el("statutIntervention", i.statut) },
+      ],
+      sections: [
+        {
+          heading: t("interventions.sec.signalement"),
+          fields: [
+            { label: t("interventions.f.anomalie"), value: i.description ?? "" },
+            { label: t("interventions.f.contact"), value: i.contactReferent ?? "" },
+            { label: t("interventions.f.debut"), value: i.dateDebutPanne ? new Date(i.dateDebutPanne).toLocaleString() : "" },
+          ],
+        },
+        {
+          heading: t("interventions.sec.priseEnCharge"),
+          fields: [{ label: t("interventions.f.technicien"), value: i.technicienName ?? "" }],
+        },
+        {
+          heading: t("interventions.sec.resolution"),
+          fields: [
+            { label: t("interventions.f.actions"), value: i.descriptionResolution ?? "" },
+            { label: t("interventions.f.intervenant"), value: i.intervenantResolution ?? "" },
+          ],
+        },
+        {
+          heading: t("interventions.sec.materiel"),
+          items: (i.materiels ?? []).map((m) => `${m.produitName} × ${m.quantite} — ${m.montantTotal.toFixed(2)} €`),
+        },
+      ],
+    });
+  };
 
   return (
     <div className="space-y-6" data-testid="interventions-page">
@@ -190,10 +230,10 @@ export function InterventionsPage() {
       {feedback && (
         <div
           role="status"
-          className="flex items-center justify-between gap-2 rounded-lg border border-lime/40 bg-lime-light px-3 py-2.5 text-sm text-brand-darker"
+          className="flex items-center justify-between gap-2 rounded-lg border border-lime/40 bg-lime-light px-3 py-2.5 text-sm text-brand-darker dark:border-lime/30 dark:bg-lime/10 dark:text-lime"
         >
           <span className="font-medium">{feedback}</span>
-          <button onClick={() => setFeedback(null)} className="cursor-pointer text-slate-500 hover:text-slate-800" aria-label={t("action.close")}>
+          <button onClick={() => setFeedback(null)} className="cursor-pointer text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white" aria-label={t("action.close")}>
             ×
           </button>
         </div>
@@ -207,6 +247,9 @@ export function InterventionsPage() {
         onRowClick={(i) => openEdit(i)}
         actions={(i) => (
           <div className="flex justify-end gap-1.5">
+            <Button variant="ghost" onClick={() => printIntervention(i)} aria-label={`${t("report.print")} — ${i.name}`}>
+              <PrinterIcon />
+            </Button>
             {canManage && i.statut !== StatutIntervention.Termine && (
               <Button variant="primary" onClick={() => openEdit(i, true)}>
                 <WrenchIcon /> {t("interventions.resolve")}
@@ -281,7 +324,7 @@ export function InterventionsPage() {
             </section>
 
             {canManage && (
-              <section className="space-y-3 border-t border-slate-100 pt-4">
+              <section className="space-y-3 border-t border-slate-100 pt-4 dark:border-slate-800">
                 {sectionTitle(t("interventions.sec.priseEnCharge"))}
                 <div className="grid grid-cols-2 gap-3">
                   <FormField label={t("interventions.f.statut")}>
@@ -308,7 +351,7 @@ export function InterventionsPage() {
             )}
 
             {showResolution && (
-              <section className="space-y-3 border-t border-slate-100 pt-4">
+              <section className="space-y-3 border-t border-slate-100 pt-4 dark:border-slate-800">
                 {sectionTitle(t("interventions.sec.resolution"))}
                 <FormField label={t("interventions.f.actions")} hint={t("interventions.f.actionsHint")}>
                   <Input
@@ -324,7 +367,7 @@ export function InterventionsPage() {
             )}
 
             {canManage && !editing && (
-              <fieldset className="border-t border-slate-100 pt-4">
+              <fieldset className="border-t border-slate-100 pt-4 dark:border-slate-800">
                 <div className="mb-2 flex items-center justify-between">
                   <legend>{sectionTitle(t("interventions.sec.materiel"))}</legend>
                   <Button type="button" variant="secondary" onClick={addMateriel}>
@@ -366,7 +409,7 @@ export function InterventionsPage() {
                 <span>{error}</span>
               </div>
             )}
-            <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
+            <div className="flex justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
               <Button type="button" variant="secondary" onClick={closeForm}>
                 {t("action.cancel")}
               </Button>

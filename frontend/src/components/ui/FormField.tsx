@@ -25,12 +25,12 @@ export function FormField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-[13px] font-semibold text-slate-700">
+      <label htmlFor={id} className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">
         {label}
       </label>
       {control}
       {hint && (
-        <span id={hintId} className="text-xs text-slate-500">
+        <span id={hintId} className="text-xs text-slate-500 dark:text-slate-400">
           {hint}
         </span>
       )}

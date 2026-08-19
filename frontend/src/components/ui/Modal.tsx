@@ -58,16 +58,16 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl shadow-brand-darker/20 ring-1 ring-black/5 animate-scale-in"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl shadow-brand-darker/20 ring-1 ring-black/5 animate-scale-in dark:bg-slate-900 dark:ring-white/10"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 backdrop-blur px-5 py-4">
-          <h2 id={titleId} className="font-heading text-base font-semibold text-slate-900">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 backdrop-blur px-5 py-4 dark:border-slate-800 dark:bg-slate-900/95">
+          <h2 id={titleId} className="font-heading text-base font-semibold text-slate-900 dark:text-slate-100">
             {title}
           </h2>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             <CloseIcon />
           </button>

@@ -129,7 +129,7 @@ export function ClientsPage() {
             <FormField label={t("clients.f.address")}>
               <Input value={form.address ?? ""} onChange={(e) => setForm({ ...form, address: e.target.value })} />
             </FormField>
-            <label className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 py-2.5 text-sm text-slate-700">
+            <label className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 py-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
               <input
                 type="checkbox"
                 checked={form.isParcClient}

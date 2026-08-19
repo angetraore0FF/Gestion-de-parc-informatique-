@@ -25,16 +25,16 @@ export function Table<T extends { id: number }>({
 
   return (
     <div
-      className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-brand-darker/5"
+      className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-brand-darker/5 dark:border-slate-800 dark:bg-slate-900"
       aria-busy={isLoading || undefined}
     >
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 bg-slate-50/70 text-left">
+          <tr className="border-b border-slate-100 bg-slate-50/70 text-left dark:border-slate-800 dark:bg-slate-800/40">
             {columns.map((col) => (
               <th
                 key={col.header}
-                className="px-4 py-3 font-heading text-xs font-semibold uppercase tracking-wider text-slate-500"
+                className="px-4 py-3 font-heading text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
               >
                 {col.header}
               </th>
@@ -45,11 +45,11 @@ export function Table<T extends { id: number }>({
         <tbody>
           {isLoading &&
             Array.from({ length: 5 }).map((_, i) => (
-              <tr key={`skeleton-${i}`} className="border-b border-slate-50">
+              <tr key={`skeleton-${i}`} className="border-b border-slate-50 dark:border-slate-800/60">
                 {Array.from({ length: colSpan }).map((__, j) => (
                   <td key={j} className="px-4 py-3.5">
                     <div
-                      className="h-4 animate-pulse rounded bg-slate-100"
+                      className="h-4 animate-pulse rounded bg-slate-100 dark:bg-slate-800"
                       style={{ width: `${55 + ((i + j) % 3) * 15}%` }}
                     />
                   </td>
@@ -62,10 +62,10 @@ export function Table<T extends { id: number }>({
               <tr
                 key={row.id}
                 style={{ animationDelay: `${Math.min(idx, 12) * 25}ms` }}
-                className={`animate-fade-in border-b border-slate-50 transition-colors last:border-0 ${
+                className={`animate-fade-in border-b border-slate-50 transition-colors last:border-0 dark:border-slate-800/60 ${
                   onRowClick
-                    ? "cursor-pointer hover:bg-brand-light/60 focus-visible:outline-none focus-visible:bg-brand-light focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
-                    : "hover:bg-slate-50/60"
+                    ? "cursor-pointer hover:bg-brand-light/60 focus-visible:outline-none focus-visible:bg-brand-light focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800"
+                    : "hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
                 }`}
                 onClick={() => onRowClick?.(row)}
                 {...(onRowClick
@@ -84,7 +84,7 @@ export function Table<T extends { id: number }>({
                 {columns.map((col, ci) => (
                   <td
                     key={col.header}
-                    className={`px-4 py-3.5 ${ci === 0 ? "font-medium text-slate-900" : "text-slate-600"} ${col.className ?? ""}`}
+                    className={`px-4 py-3.5 ${ci === 0 ? "font-medium text-slate-900 dark:text-slate-100" : "text-slate-600 dark:text-slate-300"} ${col.className ?? ""}`}
                   >
                     {col.render(row)}
                   </td>
@@ -99,9 +99,9 @@ export function Table<T extends { id: number }>({
 
           {!isLoading && rows.length === 0 && (
             <tr>
-              <td colSpan={colSpan} className="px-4 py-16 text-center text-slate-400">
+              <td colSpan={colSpan} className="px-4 py-16 text-center text-slate-400 dark:text-slate-500">
                 <div className="flex flex-col items-center gap-3">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-300 dark:bg-slate-800 dark:text-slate-600">
                     <InboxIcon className="h-7 w-7" />
                   </span>
                   <span className="max-w-md text-sm">{emptyMessage}</span>

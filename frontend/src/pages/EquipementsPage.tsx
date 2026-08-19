@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { clientsApi, equipementsApi, parcsApi } from "../api/endpoints";
-import { EtatEquipement, TypeEquipement, type CreateEquipementDto, type EquipementDto } from "../api/types";
+import { clientsApi, equipementsApi, interventionsApi, parcsApi } from "../api/endpoints";
+import { EtatEquipement, StatutIntervention, TypeEquipement, type CreateEquipementDto, type EquipementDto } from "../api/types";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
+import { Drawer } from "../components/ui/Drawer";
 import { FormField } from "../components/ui/FormField";
 import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
@@ -11,9 +12,10 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
 import { StatCard } from "../components/ui/StatCard";
-import { AlertIcon, DesktopIcon, DownloadIcon, EditIcon, PlusIcon, SearchIcon, ShieldIcon, TrashIcon, WrenchIcon } from "../components/ui/Icons";
+import { AlertIcon, DesktopIcon, DownloadIcon, EditIcon, PlusIcon, PrinterIcon, SearchIcon, ShieldIcon, TrashIcon, WrenchIcon } from "../components/ui/Icons";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
+import { usePrint } from "../components/ui/PrintReport";
 
 const emptyForm: CreateEquipementDto = {
   name: "",
@@ -41,12 +43,15 @@ function openPdf(url: string) {
 export function EquipementsPage() {
   const { hasRole, isClientOnly } = useAuth();
   const { t, el, elEntries } = useI18n();
+  const { printReport } = usePrint();
   const canManage = hasRole("Admin", "GestionnaireParc", "GestionnaireIntervention", "Technicien");
   const qc = useQueryClient();
   const { data: equipements = [], isLoading } = useQuery({ queryKey: ["equipements"], queryFn: () => equipementsApi.getAll() });
   const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsApi.getAll, enabled: !isClientOnly });
   const { data: parcs = [] } = useQuery({ queryKey: ["parcs"], queryFn: () => parcsApi.getAll() });
+  const { data: interventions = [] } = useQuery({ queryKey: ["interventions"], queryFn: () => interventionsApi.getAll() });
 
+  const [detail, setDetail] = useState<EquipementDto | null>(null);
   const [editing, setEditing] = useState<EquipementDto | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<CreateEquipementDto>(emptyForm);
@@ -59,6 +64,12 @@ export function EquipementsPage() {
     if (etat === EtatEquipement.EnPanne) return <Badge color="red">{el("etat", etat)}</Badge>;
     if (etat === EtatEquipement.HorsService) return <Badge color="slate">{el("etat", etat)}</Badge>;
     return <Badge color="green">{el("etat", etat)}</Badge>;
+  };
+  const intervBadge = (statut: number) => {
+    if (statut === StatutIntervention.Termine) return <Badge color="green">{el("statutIntervention", statut)}</Badge>;
+    if (statut === StatutIntervention.Annule) return <Badge color="red">{el("statutIntervention", statut)}</Badge>;
+    if (statut === StatutIntervention.EnCours) return <Badge color="blue">{el("statutIntervention", statut)}</Badge>;
+    return <Badge color="amber">{el("statutIntervention", statut)}</Badge>;
   };
 
   const stats = useMemo(() => {
@@ -80,9 +91,7 @@ export function EquipementsPage() {
       if (filtreEtat !== "" && e.etat !== filtreEtat) return false;
       if (filtreType !== "" && e.typeEquipement !== filtreType) return false;
       if (!q) return true;
-      return [e.name, e.serialNumber, e.clientName, e.parcName, e.emplacement, e.adresseIp].some((v) =>
-        v?.toLowerCase().includes(q)
-      );
+      return [e.name, e.serialNumber, e.clientName, e.parcName, e.emplacement, e.adresseIp].some((v) => v?.toLowerCase().includes(q));
     });
   }, [equipements, search, filtreEtat, filtreType]);
 
@@ -121,6 +130,7 @@ export function EquipementsPage() {
     setShowForm(true);
   };
   const openEdit = (eq: EquipementDto) => {
+    setDetail(null);
     setEditing(eq);
     setForm({
       name: eq.name,
@@ -149,6 +159,45 @@ export function EquipementsPage() {
     else createMutation.mutate(form);
   };
 
+  const detailInterventions = detail ? interventions.filter((i) => i.equipementId === detail.id) : [];
+
+  const printEquipement = (eq: EquipementDto) => {
+    const hist = interventions.filter((i) => i.equipementId === eq.id);
+    printReport({
+      title: t("report.equipementTitle"),
+      reference: eq.name,
+      meta: [
+        { label: t("equipements.col.type"), value: el("type", eq.typeEquipement) },
+        { label: t("equipements.col.etat"), value: el("etat", eq.etat) },
+      ],
+      sections: [
+        {
+          heading: t("detail.infos"),
+          fields: [
+            { label: t("equipements.f.client"), value: eq.clientName ?? "" },
+            { label: t("equipements.f.parc"), value: eq.parcName ?? "" },
+            { label: t("equipements.f.serial"), value: eq.serialNumber ?? "" },
+            { label: t("equipements.f.emplacement"), value: eq.emplacement ?? "" },
+            { label: t("equipements.f.dateAcq"), value: eq.dateAcquisition ?? "" },
+            { label: t("equipements.f.garantie"), value: eq.garantieFin ?? "" },
+          ],
+        },
+        {
+          heading: t("detail.reseau"),
+          fields: [
+            { label: t("equipements.f.mac"), value: eq.adresseMac ?? "" },
+            { label: t("equipements.f.ip"), value: eq.adresseIp ?? "" },
+            { label: t("equipements.f.os"), value: eq.systemeExploitation ?? "" },
+          ],
+        },
+        {
+          heading: t("detail.historique"),
+          items: hist.map((i) => `${new Date(i.dateIntervention).toLocaleDateString()} — ${i.name} (${el("statutIntervention", i.statut)})`),
+        },
+      ],
+    });
+  };
+
   const columns: Column<EquipementDto>[] = [
     { header: t("equipements.col.name"), render: (e) => e.name },
     { header: t("equipements.col.type"), render: (e) => el("type", e.typeEquipement) },
@@ -167,7 +216,7 @@ export function EquipementsPage() {
               ev.stopPropagation();
               openPdf(equipementsApi.rapportPannesUrl(e.id));
             }}
-            className="inline-flex items-center gap-1 rounded font-semibold text-brand hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex items-center gap-1 rounded font-semibold text-brand hover:underline dark:text-lime cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             aria-label={`${e.incidentCount} — ${e.name}`}
           >
             {e.incidentCount} <DownloadIcon className="h-3.5 w-3.5" />
@@ -177,6 +226,13 @@ export function EquipementsPage() {
         ),
     },
   ];
+
+  const detailRow = (label: string, value?: string | null) => (
+    <div className="flex justify-between gap-4 py-2 text-sm">
+      <span className="text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="text-right font-medium text-slate-800 dark:text-slate-100">{value || t("common.none")}</span>
+    </div>
+  );
 
   return (
     <div className="space-y-6" data-testid="equipements-page">
@@ -195,9 +251,9 @@ export function EquipementsPage() {
         <StatCard label={t("equipements.stat.incidents")} value={stats.incidents} status="serious" icon={<WrenchIcon className="h-5 w-5" />} />
       </section>
 
-      <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200/80 bg-white p-4">
+      <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
         <div className="min-w-56 flex-1">
-          <label htmlFor="recherche-equipement" className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+          <label htmlFor="recherche-equipement" className="mb-1.5 block text-[13px] font-semibold text-slate-700 dark:text-slate-300">
             {t("action.search")}
           </label>
           <div className="relative">
@@ -214,7 +270,7 @@ export function EquipementsPage() {
           </div>
         </div>
         <div className="w-40">
-          <label htmlFor="filtre-etat" className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+          <label htmlFor="filtre-etat" className="mb-1.5 block text-[13px] font-semibold text-slate-700 dark:text-slate-300">
             {t("equipements.filterEtat")}
           </label>
           <Select id="filtre-etat" value={filtreEtat} onChange={(e) => setFiltreEtat(e.target.value === "" ? "" : Number(e.target.value))}>
@@ -227,7 +283,7 @@ export function EquipementsPage() {
           </Select>
         </div>
         <div className="w-44">
-          <label htmlFor="filtre-type" className="mb-1.5 block text-[13px] font-semibold text-slate-700">
+          <label htmlFor="filtre-type" className="mb-1.5 block text-[13px] font-semibold text-slate-700 dark:text-slate-300">
             {t("equipements.filterType")}
           </label>
           <Select id="filtre-type" value={filtreType} onChange={(e) => setFiltreType(e.target.value === "" ? "" : Number(e.target.value))}>
@@ -246,7 +302,7 @@ export function EquipementsPage() {
         )}
       </div>
 
-      <p className="text-sm text-slate-500" aria-live="polite">
+      <p className="text-sm text-slate-500 dark:text-slate-400" aria-live="polite">
         {equipementsFiltres.length > 1
           ? t("equipements.countPlural", { n: equipementsFiltres.length })
           : t("equipements.countSingular", { n: equipementsFiltres.length })}
@@ -258,7 +314,7 @@ export function EquipementsPage() {
         rows={equipementsFiltres}
         isLoading={isLoading}
         emptyMessage={filtresActifs ? t("equipements.emptyFiltered") : t("equipements.empty")}
-        onRowClick={canManage ? openEdit : undefined}
+        onRowClick={(e) => setDetail(e)}
         actions={
           canManage
             ? (e) => (
@@ -279,6 +335,90 @@ export function EquipementsPage() {
             : undefined
         }
       />
+
+      {detail && (
+        <Drawer
+          title={t("detail.title")}
+          onClose={() => setDetail(null)}
+          footer={
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button variant="ghost" onClick={() => printEquipement(detail)}>
+                <PrinterIcon /> {t("report.print")}
+              </Button>
+              {detail.incidentCount > 0 && (
+                <Button variant="secondary" onClick={() => openPdf(equipementsApi.rapportPannesUrl(detail.id))}>
+                  <DownloadIcon /> {t("detail.rapportPdf")}
+                </Button>
+              )}
+              {canManage && (
+                <Button onClick={() => openEdit(detail)}>
+                  <EditIcon /> {t("detail.edit")}
+                </Button>
+              )}
+            </div>
+          }
+        >
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-light text-brand dark:bg-slate-800 dark:text-lime">
+                  <DesktopIcon className="h-6 w-6" />
+                </span>
+                <div>
+                  <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-slate-100">{detail.name}</h3>
+                  <div className="mt-1 flex items-center gap-2">
+                    <Badge color="slate">{el("type", detail.typeEquipement)}</Badge>
+                    {etatBadge(detail.etat)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section>
+              <h4 className="mb-1 font-heading text-xs font-bold uppercase tracking-wider text-brand dark:text-lime">{t("detail.infos")}</h4>
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                {detailRow(t("equipements.f.client"), detail.clientName)}
+                {detailRow(t("equipements.f.parc"), detail.parcName)}
+                {detailRow(t("equipements.f.serial"), detail.serialNumber)}
+                {detailRow(t("equipements.f.emplacement"), detail.emplacement)}
+                {detailRow(t("equipements.f.dateAcq"), detail.dateAcquisition)}
+                {detailRow(t("equipements.f.garantie"), detail.garantieFin)}
+              </div>
+            </section>
+
+            <section>
+              <h4 className="mb-1 font-heading text-xs font-bold uppercase tracking-wider text-brand dark:text-lime">{t("detail.reseau")}</h4>
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                {detailRow(t("equipements.f.mac"), detail.adresseMac)}
+                {detailRow(t("equipements.f.ip"), detail.adresseIp)}
+                {detailRow(t("equipements.f.os"), detail.systemeExploitation)}
+              </div>
+            </section>
+
+            <section>
+              <h4 className="mb-2 font-heading text-xs font-bold uppercase tracking-wider text-brand dark:text-lime">{t("detail.historique")}</h4>
+              {detailInterventions.length === 0 ? (
+                <p className="text-sm text-slate-400 dark:text-slate-500">{t("detail.noHistorique")}</p>
+              ) : (
+                <ul className="space-y-2">
+                  {detailInterventions.map((i) => (
+                    <li key={i.id} className="rounded-lg border border-slate-100 p-3 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="truncate text-sm font-medium text-slate-800 dark:text-slate-100">{i.name}</span>
+                        {intervBadge(i.statut)}
+                      </div>
+                      <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        {new Date(i.dateIntervention).toLocaleDateString()}
+                        {i.descriptionResolution ? ` · ${i.descriptionResolution}` : ""}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        </Drawer>
+      )}
 
       {showForm && (
         <Modal title={editing ? t("equipements.edit") : t("equipements.new")} onClose={closeForm}>
