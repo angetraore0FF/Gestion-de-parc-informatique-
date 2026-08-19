@@ -25,6 +25,7 @@ export const translations = {
       pdf: "PDF",
       logout: "Déconnexion",
       add: "Ajouter",
+      exportCsv: "Exporter CSV",
     },
     common: {
       all: "Tous",
@@ -177,6 +178,23 @@ export const translations = {
       period: "Période",
     },
     theme: { toggle: "Thème", light: "Clair", dark: "Sombre" },
+    search: {
+      placeholder: "Rechercher un client, équipement, panne…",
+      hint: "Recherche globale",
+      groups: { clients: "Clients", equipements: "Équipements", interventions: "Interventions" },
+      noResults: "Aucun résultat pour",
+      typeHint: "Tapez pour rechercher dans tout le parc",
+    },
+    brand: {
+      settings: "Personnalisation de la marque",
+      logo: "Logo de l'entreprise",
+      logoHint: "PNG, JPG ou SVG — fond transparent recommandé (max 1 Mo).",
+      upload: "Choisir un fichier",
+      remove: "Retirer le logo",
+      name: "Nom affiché",
+      namePlaceholder: "Gestion Parc IT",
+      reset: "Réinitialiser",
+    },
     enums: {
       etat: ["En service", "En panne", "Hors service"],
       type: ["Ordinateur", "Imprimante", "Routeur", "Licence logicielle", "Autre"],
@@ -211,6 +229,7 @@ export const translations = {
       pdf: "PDF",
       logout: "Sign out",
       add: "Add",
+      exportCsv: "Export CSV",
     },
     common: {
       all: "All",
@@ -363,6 +382,23 @@ export const translations = {
       period: "Period",
     },
     theme: { toggle: "Theme", light: "Light", dark: "Dark" },
+    search: {
+      placeholder: "Search a client, equipment, incident…",
+      hint: "Global search",
+      groups: { clients: "Clients", equipements: "Equipment", interventions: "Interventions" },
+      noResults: "No results for",
+      typeHint: "Type to search across your whole fleet",
+    },
+    brand: {
+      settings: "Brand customization",
+      logo: "Company logo",
+      logoHint: "PNG, JPG or SVG — transparent background recommended (max 1 MB).",
+      upload: "Choose a file",
+      remove: "Remove logo",
+      name: "Display name",
+      namePlaceholder: "IT Asset Manager",
+      reset: "Reset",
+    },
     enums: {
       etat: ["In service", "Faulty", "Out of service"],
       type: ["Computer", "Printer", "Router", "Software license", "Other"],

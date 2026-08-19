@@ -9,7 +9,8 @@ import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Table, type Column } from "../components/ui/Table";
-import { EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { DownloadIcon, EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { downloadCsv } from "../lib/csv";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -76,6 +77,19 @@ export function ProduitsPage() {
   return (
     <div className="space-y-6" data-testid="produits-page">
       <PageHeader title={t("produits.title")} subtitle={t("produits.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-produits"
+          onClick={() =>
+            downloadCsv(
+              "produits",
+              [t("produits.col.name"), t("produits.col.ref"), t("produits.col.prix"), t("produits.col.statut")],
+              produits.map((p) => [p.name, p.reference ?? "", p.prixUnitaire.toFixed(2), p.isActive ? t("common.active") : t("common.inactive")])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         {canManage && (
           <Button onClick={openCreate} data-testid="new-produit-button">
             <PlusIcon /> {t("produits.new")}

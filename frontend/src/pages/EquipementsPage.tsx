@@ -16,6 +16,7 @@ import { AlertIcon, DesktopIcon, DownloadIcon, EditIcon, PlusIcon, PrinterIcon, 
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { usePrint } from "../components/ui/PrintReport";
+import { downloadCsv } from "../lib/csv";
 
 const emptyForm: CreateEquipementDto = {
   name: "",
@@ -237,6 +238,19 @@ export function EquipementsPage() {
   return (
     <div className="space-y-6" data-testid="equipements-page">
       <PageHeader title={t("equipements.title")} subtitle={t("equipements.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-equipements"
+          onClick={() =>
+            downloadCsv(
+              "equipements",
+              [t("equipements.col.name"), t("equipements.col.type"), t("equipements.col.client"), t("equipements.col.etat"), t("equipements.col.garantie"), t("equipements.col.parc"), t("equipements.col.emplacement"), t("equipements.f.serial"), t("equipements.f.ip"), t("equipements.col.incidents")],
+              equipementsFiltres.map((e) => [e.name, el("type", e.typeEquipement), e.clientName ?? "", el("etat", e.etat), e.garantieFin ?? "", e.parcName ?? "", e.emplacement ?? "", e.serialNumber ?? "", e.adresseIp ?? "", e.incidentCount])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         {canManage && (
           <Button onClick={openCreate} data-testid="new-equipement-button">
             <PlusIcon /> {t("equipements.new")}

@@ -9,7 +9,8 @@ import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
-import { EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { DownloadIcon, EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { downloadCsv } from "../lib/csv";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -72,6 +73,19 @@ export function ParcsPage() {
   return (
     <div className="space-y-6" data-testid="parcs-page">
       <PageHeader title={t("parcs.title")} subtitle={t("parcs.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-parcs"
+          onClick={() =>
+            downloadCsv(
+              "parcs",
+              [t("parcs.col.name"), t("parcs.col.client"), t("parcs.col.description"), t("parcs.col.equipements")],
+              parcs.map((p) => [p.name, p.clientName, p.description ?? "", p.equipementCount])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         {canManage && (
           <Button onClick={openCreate} data-testid="new-parc-button">
             <PlusIcon /> {t("parcs.new")}

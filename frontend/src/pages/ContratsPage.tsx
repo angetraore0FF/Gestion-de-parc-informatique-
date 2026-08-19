@@ -14,6 +14,7 @@ import { DownloadIcon, EditIcon, InvoiceIcon, PlusIcon, PrinterIcon, TrashIcon }
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { usePrint } from "../components/ui/PrintReport";
+import { downloadCsv } from "../lib/csv";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -153,6 +154,19 @@ export function ContratsPage() {
   return (
     <div className="space-y-6" data-testid="contrats-page">
       <PageHeader title={t("contrats.title")} subtitle={t("contrats.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-contrats"
+          onClick={() =>
+            downloadCsv(
+              "contrats",
+              [t("contrats.col.ref"), t("contrats.col.client"), t("contrats.f.dateDebut"), t("contrats.f.dateFin"), t("contrats.col.statut"), t("contrats.col.montant"), t("contrats.col.recurrence")],
+              contrats.map((c) => [c.name, c.clientName, c.dateDebut, c.dateFin, el("statutContrat", c.statut), c.montant.toFixed(2), el("recurrence", c.recurrence)])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         {canManage && (
           <>
             <Button variant="secondary" onClick={() => genererFacturesMutation.mutate()} data-testid="generer-factures-button">

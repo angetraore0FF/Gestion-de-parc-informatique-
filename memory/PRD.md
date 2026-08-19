@@ -41,5 +41,11 @@
 - **Rapports imprimables** : `PrintProvider` + document de marque A4 (`PrintReport`) et CSS `@media print`. Boutons « Imprimer » sur Contrats, Interventions et Fiche équipement (rendu élégant sans dépendre du PDF backend).
 - Vérif : `yarn build` (tsc + vite) **0 erreur** ; dev server HTTP 200. Pages authentifiées non capturables ici (backend .NET non exécutable).
 
+## Itération 3 (2026-06) — 3 fonctionnalités ajoutées
+- **Personnalisation de la marque** : `BrandProvider` (logo image en dataURL + nom affiché, persistés localStorage), composant `LogoMark`, modale de réglages (bouton engrenage dans la topbar) avec upload/retrait de logo et nom. Le logo/nom s'appliquent à la sidebar, au login et à l'en-tête des rapports imprimés.
+- **Recherche globale** : composant `GlobalSearch` dans la topbar (clients, équipements, interventions), résultats groupés avec navigation clavier (↑/↓/Entrée/Échap) et clic → page concernée.
+- **Export CSV** : utilitaire `lib/csv.ts` (séparateur `;` + BOM UTF-8 pour Excel), bouton « Exporter CSV » sur toutes les listes (Clients, Parcs, Équipements [vue filtrée], Contrats, Factures, Interventions, Techniciens, Produits).
+- Vérif : `yarn build` **0 erreur** ; app démarre correctement (login rendu). Fonctions authentifiées non capturables en aperçu (backend .NET non exécutable).
+
 ## Notes
 - Aucun compte d'auth créé/modifié par la refonte (auth gérée côté backend .NET). Identifiant par défaut affiché sur le login: `admin@gestionparc.local` (seed backend).

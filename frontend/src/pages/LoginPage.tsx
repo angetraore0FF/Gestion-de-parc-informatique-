@@ -6,10 +6,13 @@ import { Button } from "../components/ui/Button";
 import { FormField } from "../components/ui/FormField";
 import { Input } from "../components/ui/Input";
 import { AlertIcon, CheckIcon, GlobeIcon } from "../components/ui/Icons";
+import { useBrand, LogoMark } from "../brand/BrandContext";
 
 export function LoginPage() {
   const { login } = useAuth();
   const { t, lang, toggleLang } = useI18n();
+  const { name: brandName } = useBrand();
+  const displayName = brandName || t("app.name");
   const navigate = useNavigate();
   const [email, setEmail] = useState("admin@gestionparc.local");
   const [password, setPassword] = useState("");
@@ -37,10 +40,8 @@ export function LoginPage() {
       {/* Brand panel */}
       <div className="relative hidden overflow-hidden mesh-brand p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime font-heading text-base font-extrabold text-brand-darker">
-            GP
-          </span>
-          <span className="font-heading text-lg font-bold">{t("app.name")}</span>
+          <LogoMark className="h-11 w-11" textClassName="text-base" tone="lime" />
+          <span className="font-heading text-lg font-bold">{displayName}</span>
         </div>
 
         <div className="max-w-md">
@@ -66,10 +67,8 @@ export function LoginPage() {
         <div className="w-full max-w-sm animate-fade-up">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 lg:hidden">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand font-heading text-sm font-extrabold text-white">
-                GP
-              </span>
-              <span className="font-heading text-sm font-bold text-slate-800">{t("app.name")}</span>
+              <LogoMark className="h-9 w-9" tone="brand" />
+              <span className="font-heading text-sm font-bold text-slate-800">{displayName}</span>
             </div>
             <button
               onClick={toggleLang}

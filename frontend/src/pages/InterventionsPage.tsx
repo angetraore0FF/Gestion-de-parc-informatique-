@@ -10,10 +10,11 @@ import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
-import { AlertIcon, CheckIcon, InvoiceIcon, PlusIcon, PrinterIcon, TrashIcon, WrenchIcon } from "../components/ui/Icons";
+import { AlertIcon, CheckIcon, DownloadIcon, InvoiceIcon, PlusIcon, PrinterIcon, TrashIcon, WrenchIcon } from "../components/ui/Icons";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 import { usePrint } from "../components/ui/PrintReport";
+import { downloadCsv } from "../lib/csv";
 
 const emptyForm: CreateInterventionDto = {
   name: "",
@@ -222,6 +223,19 @@ export function InterventionsPage() {
   return (
     <div className="space-y-6" data-testid="interventions-page">
       <PageHeader title={t("interventions.title")} subtitle={t("interventions.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-interventions"
+          onClick={() =>
+            downloadCsv(
+              "interventions",
+              [t("interventions.col.titre"), t("interventions.col.client"), t("interventions.col.equipement"), t("interventions.col.technicien"), t("interventions.col.date"), t("interventions.col.statut"), t("interventions.col.resolution")],
+              interventions.map((i) => [i.name, i.clientName, i.equipementName, i.technicienName ?? "", new Date(i.dateIntervention).toLocaleDateString(), el("statutIntervention", i.statut), i.descriptionResolution ?? ""])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         <Button onClick={openCreate} data-testid="declare-panne-button">
           <PlusIcon /> {t("interventions.declare")}
         </Button>

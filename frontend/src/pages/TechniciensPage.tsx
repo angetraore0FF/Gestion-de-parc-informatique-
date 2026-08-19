@@ -9,7 +9,8 @@ import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Table, type Column } from "../components/ui/Table";
-import { EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { DownloadIcon, EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { downloadCsv } from "../lib/csv";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -76,6 +77,19 @@ export function TechniciensPage() {
   return (
     <div className="space-y-6" data-testid="techniciens-page">
       <PageHeader title={t("techniciens.title")} subtitle={t("techniciens.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-techniciens"
+          onClick={() =>
+            downloadCsv(
+              "techniciens",
+              [t("techniciens.col.name"), t("techniciens.col.email"), t("techniciens.col.phone"), t("techniciens.col.statut")],
+              techniciens.map((tc) => [tc.name, tc.email ?? "", tc.phone ?? "", tc.isActive ? t("common.active") : t("common.inactive")])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         {canManage && (
           <Button onClick={openCreate} data-testid="new-technicien-button">
             <PlusIcon /> {t("techniciens.new")}

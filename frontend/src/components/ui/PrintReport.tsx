@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import { useI18n } from "../../i18n/I18nContext";
+import { useBrand } from "../../brand/BrandContext";
 
 export interface ReportField {
   label: string;
@@ -25,6 +26,8 @@ const PrintContext = createContext<PrintContextValue | undefined>(undefined);
 
 export function PrintProvider({ children }: { children: ReactNode }) {
   const { t } = useI18n();
+  const { logo, name } = useBrand();
+  const displayName = name || t("app.name");
   const [report, setReport] = useState<Report | null>(null);
 
   const printReport = useCallback((r: Report) => {
@@ -51,25 +54,29 @@ export function PrintProvider({ children }: { children: ReactNode }) {
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
-                    background: "#b4d333",
-                    color: "#01293a",
-                    fontWeight: 800,
-                    fontFamily: "'Sora', sans-serif",
-                  }}
-                >
-                  GP
-                </span>
+                {logo ? (
+                  <img src={logo} alt="" style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain" }} />
+                ) : (
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 44,
+                      height: 44,
+                      borderRadius: 12,
+                      background: "#b4d333",
+                      color: "#01293a",
+                      fontWeight: 800,
+                      fontFamily: "'Sora', sans-serif",
+                    }}
+                  >
+                    GP
+                  </span>
+                )}
                 <div>
                   <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15, color: "#01293a" }}>
-                    {t("app.name")}
+                    {displayName}
                   </div>
                   <div style={{ fontSize: 12, color: "#64748b" }}>{t("app.tagline")}</div>
                 </div>

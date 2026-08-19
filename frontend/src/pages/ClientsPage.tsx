@@ -8,7 +8,8 @@ import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Table, type Column } from "../components/ui/Table";
-import { EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { DownloadIcon, EditIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { downloadCsv } from "../lib/csv";
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -80,6 +81,19 @@ export function ClientsPage() {
   return (
     <div className="space-y-6" data-testid="clients-page">
       <PageHeader title={t("clients.title")} subtitle={t("clients.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-clients"
+          onClick={() =>
+            downloadCsv(
+              "clients",
+              [t("clients.col.name"), t("clients.col.email"), t("clients.col.phone"), t("clients.col.parcs"), t("clients.col.equipements"), t("clients.col.contrats")],
+              clients.map((c) => [c.name, c.email ?? "", c.phone ?? "", c.parcCount, c.equipementCount, c.contratCount])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
         {canManage && (
           <Button onClick={openCreate} data-testid="new-client-button">
             <PlusIcon /> {t("clients.new")}

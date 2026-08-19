@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { facturesRecurrentesApi } from "../api/endpoints";
 import { StatutFacture, type FactureRecurrenteDto } from "../api/types";
 import { Badge } from "../components/ui/Badge";
+import { Button } from "../components/ui/Button";
+import { DownloadIcon } from "../components/ui/Icons";
+import { downloadCsv } from "../lib/csv";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
@@ -58,7 +61,21 @@ export function FacturesRecurrentesPage() {
 
   return (
     <div className="space-y-6" data-testid="factures-page">
-      <PageHeader title={t("factures.title")} subtitle={t("factures.subtitle")} />
+      <PageHeader title={t("factures.title")} subtitle={t("factures.subtitle")}>
+        <Button
+          variant="secondary"
+          data-testid="export-factures"
+          onClick={() =>
+            downloadCsv(
+              "factures",
+              [t("factures.col.contrat"), t("factures.col.client"), t("factures.col.date"), t("factures.col.montant"), t("factures.col.statut")],
+              factures.map((f) => [f.contratName, f.clientName, f.dateFacture, f.montant.toFixed(2), el("statutFacture", f.statut)])
+            )
+          }
+        >
+          <DownloadIcon /> {t("action.exportCsv")}
+        </Button>
+      </PageHeader>
       <Table columns={columns} rows={factures} isLoading={isLoading} emptyMessage={t("factures.empty")} />
     </div>
   );
