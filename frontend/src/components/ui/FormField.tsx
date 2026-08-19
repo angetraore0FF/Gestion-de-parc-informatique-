@@ -24,8 +24,8 @@ export function FormField({
     : children;
 
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-slate-700">
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[13px] font-semibold text-slate-700">
         {label}
       </label>
       {control}
@@ -35,7 +35,7 @@ export function FormField({
         </span>
       )}
       {error && (
-        <span id={errorId} role="alert" className="text-xs text-red-600">
+        <span id={errorId} role="alert" className="text-xs font-medium text-red-600">
           {error}
         </span>
       )}

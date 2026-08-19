@@ -1,29 +1,42 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
 
-  /* Palette Productivity Tool — Minimalism & Swiss Style */
-  --color-primary: #0d9488;
-  --color-primary-hover: #0f766e;
-  --color-primary-foreground: #ffffff;
-  --color-accent: #ea580c;
-  --color-accent-foreground: #ffffff;
-  --color-surface: #f0fdfa;
+  /* Charte : bleu #00597D + vert lime #B4D333 */
+  --color-brand: #00597d;
+  --color-brand-hover: #014a68;
+  --color-brand-dark: #013a52;
+  --color-brand-darker: #01293a;
+  --color-brand-light: #e6f0f5;
+  --color-brand-100: #cfe2eb;
 
-  /* Palette de statut (fixe, jamais thémée). Toujours accompagnée d'une
-     icône + d'un libellé : la couleur ne porte jamais le sens seule. */
-  --color-status-good: #0ca30c;
-  --color-status-warning: #fab219;
-  --color-status-serious: #ec835a;
-  --color-status-critical: #d03b3b;
+  --color-lime: #b4d333;
+  --color-lime-hover: #a1bf24;
+  --color-lime-dark: #86a017;
+  --color-lime-light: #f3f8dc;
+
+  --color-ink: #0e2733;
+  --color-surface: #f3f6f8;
+
+  /* Statuts (fixes, jamais thémés). Toujours accompagnés d'une icône + libellé. */
+  --color-status-good: #16a34a;
+  --color-status-warning: #f59e0b;
+  --color-status-serious: #ea833a;
+  --color-status-critical: #dc2626;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-surface);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -31,6 +44,77 @@ h2,
 h3,
 .font-heading {
   font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background-color: var(--color-lime);
+  color: var(--color-brand-darker);
+}
+
+/* Scrollbar discrète */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c3d1d9 transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #c3d1d9;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #a7bac4;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-in {
+  animation: fade-in 0.4s ease both;
+}
+.animate-scale-in {
+  animation: scale-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mesh-brand {
+  background-color: #01293a;
+  background-image:
+    radial-gradient(at 12% 18%, rgba(0, 89, 125, 0.85) 0px, transparent 55%),
+    radial-gradient(at 88% 8%, rgba(180, 211, 51, 0.22) 0px, transparent 45%),
+    radial-gradient(at 78% 92%, rgba(1, 74, 104, 0.9) 0px, transparent 50%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -40,5 +124,6 @@ h3,
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

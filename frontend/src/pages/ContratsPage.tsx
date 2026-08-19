@@ -1,23 +1,18 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { clientsApi, contratsApi, equipementsApi } from "../api/endpoints";
-import {
-  RecurrenceContrat,
-  RecurrenceContratLabels,
-  StatutContrat,
-  StatutContratLabels,
-  type ContratDto,
-  type CreateContratDto,
-} from "../api/types";
+import { RecurrenceContrat, StatutContrat, type ContratDto, type CreateContratDto } from "../api/types";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { FormField } from "../components/ui/FormField";
 import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
+import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
-import { DownloadIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
+import { DownloadIcon, EditIcon, InvoiceIcon, PlusIcon, TrashIcon } from "../components/ui/Icons";
 import { useAuth } from "../auth/AuthContext";
+import { useI18n } from "../i18n/I18nContext";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -32,27 +27,24 @@ const emptyForm: CreateContratDto = {
   equipementIds: [],
 };
 
-function statutBadge(statut: number) {
-  if (statut === StatutContrat.Actif) return <Badge color="green">{StatutContratLabels[statut]}</Badge>;
-  if (statut === StatutContrat.Termine) return <Badge color="slate">{StatutContratLabels[statut]}</Badge>;
-  return <Badge color="amber">{StatutContratLabels[statut]}</Badge>;
-}
-
 export function ContratsPage() {
   const { hasRole } = useAuth();
+  const { t, el, elEntries } = useI18n();
   const canManage = hasRole("Admin", "GestionnaireParc");
   const qc = useQueryClient();
   const { data: contrats = [], isLoading } = useQuery({ queryKey: ["contrats"], queryFn: () => contratsApi.getAll() });
   const { data: clients = [] } = useQuery({ queryKey: ["clients"], queryFn: clientsApi.getAll, enabled: canManage });
-  const { data: equipements = [] } = useQuery({
-    queryKey: ["equipements"],
-    queryFn: () => equipementsApi.getAll(),
-    enabled: canManage,
-  });
+  const { data: equipements = [] } = useQuery({ queryKey: ["equipements"], queryFn: () => equipementsApi.getAll(), enabled: canManage });
 
   const [editing, setEditing] = useState<ContratDto | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<CreateContratDto>(emptyForm);
+
+  const statutBadge = (statut: number) => {
+    if (statut === StatutContrat.Actif) return <Badge color="green">{el("statutContrat", statut)}</Badge>;
+    if (statut === StatutContrat.Termine) return <Badge color="slate">{el("statutContrat", statut)}</Badge>;
+    return <Badge color="amber">{el("statutContrat", statut)}</Badge>;
+  };
 
   const createMutation = useMutation({
     mutationFn: contratsApi.create,
@@ -76,7 +68,7 @@ export function ContratsPage() {
   const genererFacturesMutation = useMutation({
     mutationFn: contratsApi.genererFactures,
     onSuccess: (r) => {
-      alert(`${r.facturesGenerees} facture(s) générée(s).`);
+      alert(t("contrats.generated", { n: r.facturesGenerees }));
       qc.invalidateQueries({ queryKey: ["contrats"] });
       qc.invalidateQueries({ queryKey: ["factures-recurrentes"] });
     },
@@ -111,86 +103,76 @@ export function ContratsPage() {
 
   const toggleEquipement = (id: number) => {
     const ids = form.equipementIds ?? [];
-    setForm({
-      ...form,
-      equipementIds: ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id],
-    });
+    setForm({ ...form, equipementIds: ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id] });
+  };
+
+  const downloadPdf = (c: ContratDto) => {
+    fetch(contratsApi.pdfUrl(c.id), { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } })
+      .then((r) => r.blob())
+      .then((blob) => window.open(URL.createObjectURL(blob), "_blank"));
   };
 
   const columns: Column<ContratDto>[] = [
-    { header: "Référence", render: (c) => c.name },
-    { header: "Client", render: (c) => c.clientName },
-    { header: "Période", render: (c) => `${c.dateDebut} → ${c.dateFin}` },
-    { header: "Statut", render: (c) => statutBadge(c.statut) },
-    { header: "Montant", render: (c) => `${c.montant.toFixed(2)} €` },
-    { header: "Récurrence", render: (c) => RecurrenceContratLabels[c.recurrence] },
+    { header: t("contrats.col.ref"), render: (c) => c.name },
+    { header: t("contrats.col.client"), render: (c) => c.clientName },
+    { header: t("contrats.col.periode"), render: (c) => `${c.dateDebut} → ${c.dateFin}` },
+    { header: t("contrats.col.statut"), render: (c) => statutBadge(c.statut) },
+    { header: t("contrats.col.montant"), render: (c) => `${c.montant.toFixed(2)} €` },
+    { header: t("contrats.col.recurrence"), render: (c) => el("recurrence", c.recurrence) },
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading text-lg font-semibold text-slate-800">Contrats</h1>
-        <div className="flex gap-2">
-          {canManage && (
-            <Button variant="secondary" onClick={() => genererFacturesMutation.mutate()}>
-              Générer factures récurrentes
+    <div className="space-y-6" data-testid="contrats-page">
+      <PageHeader title={t("contrats.title")} subtitle={t("contrats.subtitle")}>
+        {canManage && (
+          <>
+            <Button variant="secondary" onClick={() => genererFacturesMutation.mutate()} data-testid="generer-factures-button">
+              <InvoiceIcon /> {t("contrats.generer")}
             </Button>
-          )}
-          {canManage && (
-            <Button onClick={openCreate}>
-              <PlusIcon /> Nouveau contrat
+            <Button onClick={openCreate} data-testid="new-contrat-button">
+              <PlusIcon /> {t("contrats.new")}
             </Button>
-          )}
-        </div>
-      </div>
+          </>
+        )}
+      </PageHeader>
 
       <Table
         columns={columns}
         rows={contrats}
         isLoading={isLoading}
-        emptyMessage="Aucun contrat pour le moment."
+        emptyMessage={t("contrats.empty")}
         onRowClick={canManage ? openEdit : undefined}
         actions={(c) => (
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                fetch(contratsApi.pdfUrl(c.id), {
-                  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                })
-                  .then((r) => r.blob())
-                  .then((blob) => window.open(URL.createObjectURL(blob), "_blank"));
-              }}
-              aria-label={`Télécharger le PDF du contrat ${c.name}`}
-            >
-              <DownloadIcon /> PDF
+          <div className="flex justify-end gap-1.5">
+            <Button variant="ghost" onClick={() => downloadPdf(c)} aria-label={`${t("action.pdf")} — ${c.name}`}>
+              <DownloadIcon /> {t("action.pdf")}
             </Button>
             {canManage && (
-              <Button
-                variant="danger"
-                onClick={() => {
-                  if (confirm(`Supprimer ${c.name} ?`)) deleteMutation.mutate(c.id);
-                }}
-              >
-                <TrashIcon /> Suppr.
-              </Button>
+              <>
+                <Button variant="ghost" onClick={() => openEdit(c)} aria-label={t("contrats.edit")}>
+                  <EditIcon />
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    if (confirm(t("common.confirmDelete", { name: c.name }))) deleteMutation.mutate(c.id);
+                  }}
+                >
+                  <TrashIcon /> {t("action.delete")}
+                </Button>
+              </>
             )}
           </div>
         )}
       />
 
       {showForm && (
-        <Modal title={editing ? "Modifier le contrat" : "Nouveau contrat"} onClose={closeForm}>
-          <form onSubmit={onSubmit} className="space-y-3">
-            <FormField label="Client">
-              <Select
-                value={form.clientId}
-                onChange={(e) => setForm({ ...form, clientId: Number(e.target.value) })}
-                required
-              >
+        <Modal title={editing ? t("contrats.edit") : t("contrats.new")} onClose={closeForm}>
+          <form onSubmit={onSubmit} className="space-y-4" data-testid="contrat-form">
+            <FormField label={t("contrats.f.client")}>
+              <Select value={form.clientId} onChange={(e) => setForm({ ...form, clientId: Number(e.target.value) })} required>
                 <option value={0} disabled>
-                  Sélectionner un client
+                  {t("contrats.f.selectClient")}
                 </option>
                 {clients.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -200,39 +182,26 @@ export function ContratsPage() {
               </Select>
             </FormField>
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Date de début">
-                <Input
-                  type="date"
-                  value={form.dateDebut}
-                  onChange={(e) => setForm({ ...form, dateDebut: e.target.value })}
-                  required
-                />
+              <FormField label={t("contrats.f.dateDebut")}>
+                <Input type="date" value={form.dateDebut} onChange={(e) => setForm({ ...form, dateDebut: e.target.value })} required />
               </FormField>
-              <FormField label="Date de fin">
-                <Input
-                  type="date"
-                  value={form.dateFin}
-                  onChange={(e) => setForm({ ...form, dateFin: e.target.value })}
-                  required
-                />
+              <FormField label={t("contrats.f.dateFin")}>
+                <Input type="date" value={form.dateFin} onChange={(e) => setForm({ ...form, dateFin: e.target.value })} required />
               </FormField>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Statut">
+              <FormField label={t("contrats.f.statut")}>
                 <Select value={form.statut} onChange={(e) => setForm({ ...form, statut: Number(e.target.value) })}>
-                  {Object.entries(StatutContratLabels).map(([v, l]) => (
+                  {elEntries("statutContrat").map(([v, l]) => (
                     <option key={v} value={v}>
                       {l}
                     </option>
                   ))}
                 </Select>
               </FormField>
-              <FormField label="Récurrence">
-                <Select
-                  value={form.recurrence}
-                  onChange={(e) => setForm({ ...form, recurrence: Number(e.target.value) })}
-                >
-                  {Object.entries(RecurrenceContratLabels).map(([v, l]) => (
+              <FormField label={t("contrats.f.recurrence")}>
+                <Select value={form.recurrence} onChange={(e) => setForm({ ...form, recurrence: Number(e.target.value) })}>
+                  {elEntries("recurrence").map(([v, l]) => (
                     <option key={v} value={v}>
                       {l}
                     </option>
@@ -241,45 +210,35 @@ export function ContratsPage() {
               </FormField>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Montant (€)">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={form.montant}
-                  onChange={(e) => setForm({ ...form, montant: Number(e.target.value) })}
-                  required
-                />
+              <FormField label={t("contrats.f.montant")}>
+                <Input type="number" step="0.01" value={form.montant} onChange={(e) => setForm({ ...form, montant: Number(e.target.value) })} required />
               </FormField>
-              <FormField label="Prochaine facture">
-                <Input
-                  type="date"
-                  value={form.prochaineFacture ?? ""}
-                  onChange={(e) => setForm({ ...form, prochaineFacture: e.target.value })}
-                />
+              <FormField label={t("contrats.f.prochaine")}>
+                <Input type="date" value={form.prochaineFacture ?? ""} onChange={(e) => setForm({ ...form, prochaineFacture: e.target.value })} />
               </FormField>
             </div>
-            <fieldset className="border rounded-md p-2">
-              <legend className="text-sm font-medium text-slate-700 px-1">Équipements couverts</legend>
-              <div className="max-h-32 overflow-y-auto space-y-1">
+            <fieldset className="rounded-lg border border-slate-200 p-3">
+              <legend className="px-1 text-[13px] font-semibold text-slate-700">{t("contrats.f.equipements")}</legend>
+              <div className="max-h-36 space-y-1 overflow-y-auto">
                 {equipements.map((eq) => (
-                  <label key={eq.id} className="flex items-center gap-2 text-sm py-0.5">
+                  <label key={eq.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-sm text-slate-700 hover:bg-slate-50">
                     <input
                       type="checkbox"
                       checked={form.equipementIds?.includes(eq.id) ?? false}
                       onChange={() => toggleEquipement(eq.id)}
-                      className="w-4 h-4 accent-[var(--color-primary)] cursor-pointer"
+                      className="h-4 w-4 accent-brand cursor-pointer"
                     />
                     {eq.name}
                   </label>
                 ))}
               </div>
             </fieldset>
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-1">
               <Button type="button" variant="secondary" onClick={closeForm}>
-                Annuler
+                {t("action.cancel")}
               </Button>
-              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                Enregistrer
+              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} data-testid="contrat-save-button">
+                {t("action.save")}
               </Button>
             </div>
           </form>

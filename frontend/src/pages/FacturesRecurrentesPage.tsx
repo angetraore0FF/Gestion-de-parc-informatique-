@@ -1,19 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { facturesRecurrentesApi } from "../api/endpoints";
-import { StatutFacture, StatutFactureLabels, type FactureRecurrenteDto } from "../api/types";
+import { StatutFacture, type FactureRecurrenteDto } from "../api/types";
 import { Badge } from "../components/ui/Badge";
+import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Table, type Column } from "../components/ui/Table";
 import { useAuth } from "../auth/AuthContext";
-
-function statutBadge(statut: number) {
-  if (statut === StatutFacture.Payee) return <Badge color="green">{StatutFactureLabels[statut]}</Badge>;
-  if (statut === StatutFacture.Envoyee) return <Badge color="blue">{StatutFactureLabels[statut]}</Badge>;
-  return <Badge color="amber">{StatutFactureLabels[statut]}</Badge>;
-}
+import { useI18n } from "../i18n/I18nContext";
 
 export function FacturesRecurrentesPage() {
   const { hasRole } = useAuth();
+  const { t, el, elEntries } = useI18n();
   const canUpdateStatut = hasRole("Admin", "GestionnaireParc", "GestionnaireIntervention", "Technicien");
   const qc = useQueryClient();
   const { data: factures = [], isLoading } = useQuery({
@@ -22,27 +19,32 @@ export function FacturesRecurrentesPage() {
   });
 
   const updateStatutMutation = useMutation({
-    mutationFn: ({ id, statut }: { id: number; statut: number }) =>
-      facturesRecurrentesApi.updateStatut(id, { statut }),
+    mutationFn: ({ id, statut }: { id: number; statut: number }) => facturesRecurrentesApi.updateStatut(id, { statut }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["factures-recurrentes"] }),
   });
 
+  const statutBadge = (statut: number) => {
+    if (statut === StatutFacture.Payee) return <Badge color="green">{el("statutFacture", statut)}</Badge>;
+    if (statut === StatutFacture.Envoyee) return <Badge color="blue">{el("statutFacture", statut)}</Badge>;
+    return <Badge color="amber">{el("statutFacture", statut)}</Badge>;
+  };
+
   const columns: Column<FactureRecurrenteDto>[] = [
-    { header: "Contrat", render: (f) => f.contratName },
-    { header: "Client", render: (f) => f.clientName },
-    { header: "Date", render: (f) => f.dateFacture },
-    { header: "Montant", render: (f) => `${f.montant.toFixed(2)} €` },
+    { header: t("factures.col.contrat"), render: (f) => f.contratName },
+    { header: t("factures.col.client"), render: (f) => f.clientName },
+    { header: t("factures.col.date"), render: (f) => f.dateFacture },
+    { header: t("factures.col.montant"), render: (f) => `${f.montant.toFixed(2)} €` },
     {
-      header: "Statut",
+      header: t("factures.col.statut"),
       render: (f) =>
         canUpdateStatut ? (
           <Select
             value={f.statut}
             onChange={(e) => updateStatutMutation.mutate({ id: f.id, statut: Number(e.target.value) })}
-            className="w-32"
-            aria-label={`Statut de la facture du contrat ${f.contratName}`}
+            className="w-40"
+            aria-label={`${t("factures.col.statut")} — ${f.contratName}`}
           >
-            {Object.entries(StatutFactureLabels).map(([v, l]) => (
+            {elEntries("statutFacture").map(([v, l]) => (
               <option key={v} value={v}>
                 {l}
               </option>
@@ -55,9 +57,9 @@ export function FacturesRecurrentesPage() {
   ];
 
   return (
-    <div className="space-y-4">
-      <h1 className="font-heading text-lg font-semibold text-slate-800">Factures récurrentes</h1>
-      <Table columns={columns} rows={factures} isLoading={isLoading} emptyMessage="Aucune facture pour le moment." />
+    <div className="space-y-6" data-testid="factures-page">
+      <PageHeader title={t("factures.title")} subtitle={t("factures.subtitle")} />
+      <Table columns={columns} rows={factures} isLoading={isLoading} emptyMessage={t("factures.empty")} />
     </div>
   );
 }

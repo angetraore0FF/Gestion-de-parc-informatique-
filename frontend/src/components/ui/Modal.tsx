@@ -47,27 +47,32 @@ export function Modal({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-brand-darker/50 backdrop-blur-sm p-4 animate-fade-in"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl shadow-brand-darker/20 ring-1 ring-black/5 animate-scale-in"
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 id={titleId} className="font-heading font-semibold text-slate-800">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 backdrop-blur px-5 py-4">
+          <h2 id={titleId} className="font-heading text-base font-semibold text-slate-900">
             {title}
           </h2>
           <button
             onClick={onClose}
-            aria-label="Fermer"
-            className="text-slate-400 hover:text-slate-700 cursor-pointer rounded p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+            aria-label="Close"
+            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             <CloseIcon />
           </button>
         </div>
-        <div className="p-4">{children}</div>
+        <div className="p-5">{children}</div>
       </div>
     </div>
   );

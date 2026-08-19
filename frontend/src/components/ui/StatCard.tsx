@@ -2,10 +2,8 @@ import type { ReactNode } from "react";
 
 type Status = "neutral" | "good" | "warning" | "serious" | "critical";
 
-// Palette de statut fixe. La couleur ne porte jamais le sens seule :
-// chaque tuile associe systématiquement une icône et un libellé.
 const statusColor: Record<Status, string> = {
-  neutral: "var(--color-primary)",
+  neutral: "var(--color-brand)",
   good: "var(--color-status-good)",
   warning: "var(--color-status-warning)",
   serious: "var(--color-status-serious)",
@@ -25,20 +23,26 @@ export function StatCard({
   status?: Status;
   hint?: string;
 }) {
+  const color = statusColor[status];
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4 flex items-start gap-3">
-      <span
-        className="mt-0.5 shrink-0"
-        style={{ color: statusColor[status] }}
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-darker/5">
+      <div
+        className="absolute inset-x-0 top-0 h-1 opacity-80"
+        style={{ backgroundColor: color }}
         aria-hidden="true"
-      >
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <div className="font-heading text-2xl font-semibold text-slate-900 leading-tight">{value}</div>
-        <div className="text-sm text-slate-600">{label}</div>
-        {hint && <div className="text-xs text-slate-400 mt-0.5">{hint}</div>}
+      />
+      <div className="flex items-center justify-between">
+        <span className="font-heading text-3xl font-bold leading-none text-slate-900">{value}</span>
+        <span
+          className="flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
+          style={{ color, backgroundColor: `color-mix(in srgb, ${color} 12%, white)` }}
+          aria-hidden="true"
+        >
+          {icon}
+        </span>
       </div>
+      <div className="mt-3 text-sm font-medium text-slate-600">{label}</div>
+      {hint && <div className="mt-0.5 text-xs text-slate-400">{hint}</div>}
     </div>
   );
 }

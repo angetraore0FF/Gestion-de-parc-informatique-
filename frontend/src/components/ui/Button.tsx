@@ -1,12 +1,15 @@
 import type { ButtonHTMLAttributes } from "react";
 
-type Variant = "primary" | "secondary" | "danger" | "ghost";
+type Variant = "primary" | "secondary" | "danger" | "ghost" | "accent";
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] disabled:bg-teal-300",
-  secondary: "bg-slate-200 text-slate-800 hover:bg-slate-300",
-  danger: "bg-red-600 text-white hover:bg-red-700",
-  ghost: "bg-transparent text-slate-600 hover:bg-slate-100",
+  primary:
+    "bg-brand text-white shadow-sm shadow-brand/20 hover:bg-brand-hover hover:-translate-y-px active:translate-y-0 disabled:bg-brand/40 disabled:shadow-none",
+  accent:
+    "bg-lime text-brand-darker font-semibold shadow-sm shadow-lime/30 hover:bg-lime-hover hover:-translate-y-px active:translate-y-0",
+  secondary: "bg-white text-brand ring-1 ring-brand-100 hover:bg-brand-light hover:ring-brand/30",
+  danger: "bg-white text-red-600 ring-1 ring-red-200 hover:bg-red-50 hover:ring-red-300",
+  ghost: "bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900",
 };
 
 export function Button({
@@ -16,7 +19,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
   return (
     <button
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-1 ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-[background-color,transform,box-shadow,color] duration-200 cursor-pointer disabled:cursor-not-allowed disabled:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-white ${variantClasses[variant]} ${className}`}
       {...props}
     />
   );
